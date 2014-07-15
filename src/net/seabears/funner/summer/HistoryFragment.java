@@ -1,27 +1,20 @@
 package net.seabears.funner.summer;
 
 import net.seabears.funner.db.FunnerDbHelper;
-import net.seabears.funner.summer.suggest.SuggestArgs;
-import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 
-public class IdeasFragment extends ProgressListFragment
+public class HistoryFragment extends ProgressListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
 {
-  /**
-   * The fragment argument representing the section number for this fragment.
-   */
-  public static final String ARG_SECTION_NUMBER = "section_number";
-
-  public static final String ARG_QUERY_OPTIONS = "query_options";
+  private static final int MAX_ROWS = 50;
 
   // This is the Adapter being used to display the list's data
   private SimpleCursorAdapter mAdapter;
@@ -32,14 +25,14 @@ public class IdeasFragment extends ProgressListFragment
     super.onCreate(savedInstanceState);
 
     // For the cursor adapter, specify which columns go into which views
-    final String[] fromColumns = { "action" };
+    final String[] fromColumns = { "action", "performed" };
     // The TextView in simple_list_item_1
-    final int[] toViews = { android.R.id.text1 };
+    final int[] toViews = { android.R.id.text1, android.R.id.text2 };
 
     // Create an empty adapter we will use to display the loaded data.
     // We pass null for the cursor, then update it in onLoadFinished()
     mAdapter = new SimpleCursorAdapter(getActivity(),
-        android.R.layout.simple_list_item_1, null,
+        android.R.layout.simple_list_item_2, null,
         fromColumns, toViews, 0);
     setListAdapter(mAdapter);
 
@@ -48,19 +41,24 @@ public class IdeasFragment extends ProgressListFragment
     getLoaderManager().initLoader(0, getArguments(), this);
   }
 
-  // Called when a new Loader needs to be created
+  @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
     // Now create and return a CursorLoader that will take care of
     // creating a Cursor for the data being displayed.
-    return new SQLiteCursorLoader(
-        getActivity().getApplicationContext(),
+    return new SQLiteCursorLoader(getActivity().getApplicationContext(),
         new FunnerDbHelper(getActivity().getApplicationContext()),
-        SuggestionSqlQueryFactory.query(getActivity().getApplicationContext()),
-        SuggestionSqlQueryFactory.args(SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS))));
+        "select p._id as _id, p.action_name as action, datetime(a.performed) as performed "
+            + "from action a "
+            + "join pastime p on a.pastime_id = p._id "
+            + "join selection_method sm on a.method_id = sm._id "
+            + "where sm.name <> 'ballast' "
+            + "order by a.performed desc "
+            + "limit ?",
+        new String[] { String.valueOf(MAX_ROWS) });
   }
 
-  // Called when a previously created loader has finished loading
+  @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data)
   {
     // Swap the new cursor in. (The framework will take care of closing the
@@ -72,8 +70,7 @@ public class IdeasFragment extends ProgressListFragment
     }
   }
 
-  // Called when a previously created loader is reset, making the data
-  // unavailable
+  @Override
   public void onLoaderReset(Loader<Cursor> loader)
   {
     // This is called when the last Cursor provided to onLoadFinished()
