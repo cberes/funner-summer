@@ -3,8 +3,10 @@ package net.seabears.funner.summer;
 import java.util.Arrays;
 import java.util.List;
 
+import net.seabears.funner.db.FunnerDbHelper;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -30,10 +32,18 @@ public class Pastime extends Activity
     // Show the Up button in the action bar.
     getActionBar().setDisplayHomeAsUpEnabled(true);
 
+    Cursor cursor = new FunnerDbHelper(this).getReadableDatabase()
+        .query("pastime", new String[] { "action_name", "active" },
+            "_id = ?", new String[] { String.valueOf(22) },
+            null, null, null);
+    cursor.moveToFirst();
+    final String action = cursor.getString(cursor.getColumnIndex("action_name"));
+    final boolean active = Integer.parseInt(cursor.getString(cursor.getColumnIndex("active"))) != 0;
+
     // pastime details
-    setTitle("Walking");
+    setTitle(action);
     TextView actionView = (TextView) findViewById(R.id.pastime_action);
-    actionView.setText("Enjoy a walk");
+    actionView.setText(action);
 
     // settings
     settings = Arrays.asList(getResources().getText(R.string.pastime_include).toString());
@@ -56,6 +66,7 @@ public class Pastime extends Activity
             Toast.LENGTH_SHORT).show();
       }
     });
+    settingsView.setItemChecked(0, active);
   }
 
   @Override
