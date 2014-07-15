@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 
 import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 
-public class ListViewLoader extends ListFragment
+public class IdeasFragment extends ListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
 {
   /**
@@ -36,7 +36,7 @@ public class ListViewLoader extends ListFragment
     super.onCreate(savedInstanceState);
 
     // Create a progress bar to display while the list loads
-    ProgressBar progressBar = new ProgressBar(this.getActivity());
+    ProgressBar progressBar = new ProgressBar(getActivity());
     progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
         LayoutParams.WRAP_CONTENT));
     progressBar.setIndeterminate(true);
@@ -79,7 +79,6 @@ public class ListViewLoader extends ListFragment
         new FunnerDbHelper(getActivity().getApplicationContext()),
         SuggestionSqlQueryFactory.query(getActivity().getApplicationContext()),
         SuggestionSqlQueryFactory.args(SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS))));
-
   }
 
   // Called when a previously created loader has finished loading

@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -93,6 +94,16 @@ public class Ideas extends Activity implements ActionBar.TabListener
     {
       return true;
     }
+    else if (id == R.id.action_history)
+    {
+      startActivity(new Intent(this, History.class));
+      return true;
+    }
+    else if (id == R.id.action_pastimes)
+    {
+      startActivity(new Intent(this, Pastimes.class));
+      return true;
+    }
     return super.onOptionsItemSelected(item);
   }
 
@@ -130,21 +141,21 @@ public class Ideas extends Activity implements ActionBar.TabListener
       final int temp = 70;
       final String weather = "rainy";
 
-      ListViewLoader fragment = new ListViewLoader();
+      IdeasFragment fragment = new IdeasFragment();
       Bundle args = new Bundle();
-      args.putInt(ListViewLoader.ARG_SECTION_NUMBER, position);
+      args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
       switch (position)
       {
       case 0:
-        args.putBundle(ListViewLoader.ARG_QUERY_OPTIONS,
+        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
             new SuggestArgs(count, false, true, temp, weather).toBundle());
         break;
       case 1:
-        args.putBundle(ListViewLoader.ARG_QUERY_OPTIONS,
+        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
             new SuggestArgs(count, false, false, temp, weather).toBundle());
         break;
       case 2:
-        args.putBundle(ListViewLoader.ARG_QUERY_OPTIONS,
+        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
             new SuggestArgs(count, true, false, temp, weather).toBundle());
         break;
       }

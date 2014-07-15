@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Funner Summer</string>
     <string name="title_section1">Solo</string>
     <string name="title_section2">Couple</string>
     <string name="title_section3">Group</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="empty">There\'s nothing here</string>
+    <string name="action_pastimes">All activities</string>
+    <string name="action_history">History</string>
     <string name="action_settings">Settings</string>
-
 </resources>

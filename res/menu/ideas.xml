@@ -3,6 +3,18 @@
     tools:context="net.seabears.funner.summer.Ideas" >
 
     <item
+        android:id="@+id/action_pastimes"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_pastimes"/>
+
+    <item
+        android:id="@+id/action_history"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_history"/>
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
