@@ -1,5 +1,6 @@
 package net.seabears.funner.summer;
 
+import net.seabears.funner.summer.R;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;

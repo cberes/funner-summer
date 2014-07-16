@@ -4,6 +4,7 @@ import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -27,9 +28,9 @@ public class IdeasFragment extends ProgressListFragment
   private SimpleCursorAdapter mAdapter;
 
   @Override
-  public void onCreate(Bundle savedInstanceState)
+  public void onActivityCreated(Bundle savedInstanceState)
   {
-    super.onCreate(savedInstanceState);
+    super.onActivityCreated(savedInstanceState);
 
     // For the cursor adapter, specify which columns go into which views
     final String[] fromColumns = { "action" };
@@ -85,6 +86,8 @@ public class IdeasFragment extends ProgressListFragment
   @Override
   public void onListItemClick(ListView l, View v, int position, long id)
   {
-    // Do something when a list item is clicked
+    Intent intent = new Intent(this.getActivity(), Pastime.class);
+    intent.putExtra(Pastime.ARG_PASTIME_ID, id);
+    startActivity(intent);
   }
 }

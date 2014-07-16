@@ -13,7 +13,9 @@
               android:layout_height="wrap_content"
               android:gravity="center"
               android:layout_marginBottom="@dimen/view_vertical_margin"
-              android:textAppearance="?android:attr/textAppearanceMedium"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"
+              android:ellipsize="none"
+              android:scrollHorizontally="false"/>
 
     <Button android:id="@+id/button_pastime_do"
             android:layout_width="wrap_content"
@@ -26,9 +28,23 @@
               android:layout_height="wrap_content"
               android:text="@string/pastime_history"
               android:layout_marginBottom="@dimen/view_vertical_margin"
+              android:layout_marginTop="@dimen/view_vertical_margin"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:textAllCaps="true"
               android:textColor="#9C0"/>
+
+    <TextView android:id="@+id/pastime_history_loading"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/loading"
+              android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <TextView android:id="@+id/pastime_history_empty"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/pastime_empty"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:visibility="gone"/>
 
     <ListView android:id="@+id/pastime_history"
               android:layout_width="match_parent"
@@ -39,6 +55,7 @@
               android:layout_height="wrap_content"
               android:text="@string/action_settings"
               android:layout_marginBottom="@dimen/view_vertical_margin"
+              android:layout_marginTop="@dimen/view_vertical_margin"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:textAllCaps="true"
               android:textColor="#9C0"/>

@@ -2,6 +2,7 @@ package net.seabears.funner.summer;
 
 import net.seabears.funner.db.FunnerDbHelper;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -18,9 +19,9 @@ public class PastimesFragment extends ProgressListFragment
   private SimpleCursorAdapter mAdapter;
 
   @Override
-  public void onCreate(Bundle savedInstanceState)
+  public void onActivityCreated(Bundle savedInstanceState)
   {
-    super.onCreate(savedInstanceState);
+    super.onActivityCreated(savedInstanceState);
 
     // For the cursor adapter, specify which columns go into which views
     final String[] fromColumns = { "action" };
@@ -74,6 +75,8 @@ public class PastimesFragment extends ProgressListFragment
   @Override
   public void onListItemClick(ListView l, View v, int position, long id)
   {
-    // Do something when a list item is clicked
+    Intent intent = new Intent(this.getActivity(), Pastime.class);
+    intent.putExtra(Pastime.ARG_PASTIME_ID, id);
+    startActivity(intent);
   }
 }
