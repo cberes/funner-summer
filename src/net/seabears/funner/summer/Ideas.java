@@ -137,7 +137,7 @@ public class Ideas extends Activity implements ActionBar.TabListener
     @Override
     public Fragment getItem(int position)
     {
-      final int count = 5;
+      final int count = 7;
       final int temp = 70;
       final String weather = "rainy";
 

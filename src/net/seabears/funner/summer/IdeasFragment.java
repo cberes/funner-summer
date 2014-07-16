@@ -27,6 +27,8 @@ public class IdeasFragment extends ProgressListFragment
   // This is the Adapter being used to display the list's data
   private SimpleCursorAdapter mAdapter;
 
+  private SuggestArgs suggestArgs;
+
   @Override
   public void onActivityCreated(Bundle savedInstanceState)
   {
@@ -54,11 +56,12 @@ public class IdeasFragment extends ProgressListFragment
   {
     // Now create and return a CursorLoader that will take care of
     // creating a Cursor for the data being displayed.
+    suggestArgs = SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS));
     return new SQLiteCursorLoader(
         getActivity().getApplicationContext(),
         new FunnerDbHelper(getActivity().getApplicationContext()),
         SuggestionSqlQueryFactory.query(getActivity().getApplicationContext()),
-        SuggestionSqlQueryFactory.args(SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS))));
+        SuggestionSqlQueryFactory.args(suggestArgs));
   }
 
   // Called when a previously created loader has finished loading
@@ -88,6 +91,8 @@ public class IdeasFragment extends ProgressListFragment
   {
     Intent intent = new Intent(this.getActivity(), Pastime.class);
     intent.putExtra(Pastime.ARG_PASTIME_ID, id);
+    intent.putExtra(Pastime.ARG_PARENT, Ideas.class);
+    intent.putExtra(Pastime.ARG_PASTIME_ARGS, suggestArgs);
     startActivity(intent);
   }
 }

@@ -7,10 +7,15 @@
     <string name="action_pastimes">All activities</string>
     <string name="action_history">History</string>
     <string name="action_settings">Settings</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="empty">There\'s nothing here</string>
     <string name="loading">Loading &#8230;</string>
     <string name="pastime_do">Let\'s go!</string>
     <string name="pastime_history">Activity history</string>
     <string name="pastime_include">Include in suggestions</string>
     <string name="pastime_empty">You haven\'t done this yet!</string>
+    <string name="pastime_recorded">Recorded your activity. Have fun!</string>
+    <string name="pastime_manual_prompt">Will you be doing this activity alone, with one other person, or with a group?</string>
+    <string name="pastime_search_prompt">Need some help to</string>
 </resources>

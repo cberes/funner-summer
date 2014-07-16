@@ -85,6 +85,7 @@ public class HistoryFragment extends ProgressListFragment
   {
     Intent intent = new Intent(this.getActivity(), Pastime.class);
     intent.putExtra(Pastime.ARG_PASTIME_ID, id);
+    intent.putExtra(Pastime.ARG_PARENT, History.class);
     startActivity(intent);
   }
 }

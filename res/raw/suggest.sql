@@ -86,6 +86,8 @@ join action a on a._id = m.action_id
 where s.name = 'temperature'
 and m.value_integer between ? - 10 and ? + 10
 ) c) temp on temp._id = p._id
+-- only active pastimes
+WHERE p.active = 1
 -- order by total probability (prb)
 ORDER BY ifnull(nullif(t.p, 0.0), 0.001)
 * ifnull(nullif(d.p, 0.0), 0.001)
