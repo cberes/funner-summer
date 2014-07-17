@@ -47,23 +47,16 @@ public class ActionInsertTask
   public void insert()
   {
     // add action row
-    ContentValues values = new ContentValues();
+    final ContentValues values = new ContentValues();
     values.put("pastime_id", pastimeId);
     values.put("method_id", selectionMethodId);
-    long id = db.insert("action", null, values);
+    final long id = db.insert("action", null, values);
 
-    // add group measurement
+    // add crowd measurement
     values.clear();
     values.put("action_id", id);
-    values.put("stat_id", Statistic.GROUP.getId());
-    values.put("value_integer", pastimeArgs.isGroup() ? 1 : 0);
-    db.insert("measurement", null, values);
-
-    // add single measurement
-    values.clear();
-    values.put("action_id", id);
-    values.put("stat_id", Statistic.SINGLE.getId());
-    values.put("value_integer", pastimeArgs.isSingle() ? 1 : 0);
+    values.put("stat_id", Statistic.CROWD.getId());
+    values.put("value_text", pastimeArgs.getCrowd().getCode());
     db.insert("measurement", null, values);
 
     // add temperature measurement

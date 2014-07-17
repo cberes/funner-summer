@@ -1,6 +1,7 @@
 package net.seabears.funner.summer;
 
 import net.seabears.funner.db.ActionInsertTask;
+import net.seabears.funner.db.Crowd;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,21 +36,21 @@ public class ManualPastimeDialogFragment extends DialogFragment
         {
           public void onClick(DialogInterface dialog, int id)
           {
-            runInsert(new PastimeActionArgs(true, false, 0, null));
+            runInsert(new PastimeActionArgs(Crowd.GROUP, 0, null));
           }
         })
         .setNeutralButton(R.string.title_section2, new DialogInterface.OnClickListener()
         {
           public void onClick(DialogInterface dialog, int id)
           {
-            runInsert(new PastimeActionArgs(false, false, 0, null));
+            runInsert(new PastimeActionArgs(Crowd.COUPLE, 0, null));
           }
         })
         .setNegativeButton(R.string.title_section1, new DialogInterface.OnClickListener()
         {
           public void onClick(DialogInterface dialog, int id)
           {
-            runInsert(new PastimeActionArgs(false, true, 0, null));
+            runInsert(new PastimeActionArgs(Crowd.SINGLE, 0, null));
           }
         });
     // Create the AlertDialog object and return it

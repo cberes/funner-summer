@@ -2,26 +2,24 @@ package net.seabears.funner.summer.suggest;
 
 import java.io.Serializable;
 
+import net.seabears.funner.db.Crowd;
 import android.os.Bundle;
 
 public class PastimeActionArgs implements Serializable
 {
   private static final long serialVersionUID = -1873078141883313938L;
 
-  private static final String KEY_GROUP = "group";
-  private static final String KEY_SINGLE = "single";
+  private static final String KEY_CROWD = "crowd";
   private static final String KEY_TEMPERATURE = "temperature";
   private static final String KEY_WEATHER = "weather";
 
-  private final boolean group;
-  private final boolean single;
+  private final Crowd crowd;
   private final int temperature;
   private final String weather;
 
-  public PastimeActionArgs(boolean group, boolean single, int temperature, String weather)
+  public PastimeActionArgs(Crowd crowd, int temperature, String weather)
   {
-    this.group = group;
-    this.single = single;
+    this.crowd = crowd;
     this.temperature = temperature;
     this.weather = weather;
   }
@@ -29,8 +27,7 @@ public class PastimeActionArgs implements Serializable
   public static PastimeActionArgs fromBundle(Bundle bundle)
   {
     return new PastimeActionArgs(
-        bundle.getBoolean(KEY_GROUP),
-        bundle.getBoolean(KEY_SINGLE),
+        Crowd.fromString(bundle.getString(KEY_CROWD)),
         bundle.getInt(KEY_TEMPERATURE),
         bundle.getString(KEY_WEATHER));
   }
@@ -38,21 +35,15 @@ public class PastimeActionArgs implements Serializable
   public Bundle toBundle()
   {
     Bundle bundle = new Bundle();
-    bundle.putBoolean(KEY_GROUP, group);
-    bundle.putBoolean(KEY_SINGLE, single);
+    bundle.putString(KEY_CROWD, crowd.getCode());
     bundle.putInt(KEY_TEMPERATURE, temperature);
     bundle.putString(KEY_WEATHER, weather);
     return bundle;
   }
 
-  public boolean isGroup()
+  public Crowd getCrowd()
   {
-    return group;
-  }
-
-  public boolean isSingle()
-  {
-    return single;
+    return crowd;
   }
 
   public int getTemperature()

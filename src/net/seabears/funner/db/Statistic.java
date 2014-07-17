@@ -2,8 +2,7 @@ package net.seabears.funner.db;
 
 public enum Statistic
 {
-  GROUP(3),
-  SINGLE(4),
+  CROWD(3),
   TEMPERATURE(1),
   WEATHER(2);
 

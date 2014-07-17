@@ -23,7 +23,7 @@ _id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 pastime_id INTEGER NOT NULL REFERENCES pastime(_id),
 method_id INTEGER NOT NULL REFERENCES selection_method(_id),
 performed INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
-day INTEGER NOT NULL DEFAULT (CAST (strftime('%w', date('now')) AS INTEGER)) COLLATE NOCASE
+day INTEGER NOT NULL DEFAULT (CAST (strftime('%w', date('now'), 'localtime') AS INTEGER)) COLLATE NOCASE
 );
 
 CREATE TABLE IF NOT EXISTS statistic (
@@ -37,7 +37,7 @@ _id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 stat_id INTEGER NOT NULL REFERENCES statistic(_id),
 action_id INTEGER NOT NULL REFERENCES action(_id),
 value_integer INTEGER,
-value_text TEXT
+value_text TEXT COLLATE NOCASE
 );
 
 INSERT INTO selection_method
@@ -52,8 +52,12 @@ INSERT INTO statistic
 (name, type) VALUES
 ('temperature', 'integer'),
 ('weather', 'text'),
-('group', 'integer'),
-('single', 'integer');
+('crowd', 'text');
+
+--
+-- use relevant times, probably on a saturday
+-- can add more action rows for multiple times
+--
 
 INSERT INTO pastime
 (name, action_name, custom) VALUES
@@ -189,14 +193,23 @@ join selection_method sm on a.method_id = sm._id and sm.name = 'ballast'
 left outer join measurement m on s._id = m.stat_id and a._id = m.action_id
 where m._id is null)
 
--- temperature
+-- high temperature
 insert into measurement
 (stat_id, action_id, value_integer)
 select s._id, a._id, 70
 from action a
 join pastime p on p._id = a.pastime_id
 join statistic s on s.name = 'temperature'
-where p.name = 'tennis'
+where p.name in ('running', 'walking', 'tennis')
+
+-- low temperature
+insert into measurement
+(stat_id, action_id, value_integer)
+select s._id, a._id, 25
+from action a
+join pastime p on p._id = a.pastime_id
+join statistic s on s.name = 'temperature'
+where p.name in ('running', 'walking', 'tennis')
 
 insert into measurement
 (stat_id, action_id, value_integer)

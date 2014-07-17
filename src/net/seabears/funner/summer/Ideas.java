@@ -2,6 +2,7 @@ package net.seabears.funner.summer;
 
 import java.util.Locale;
 
+import net.seabears.funner.db.Crowd;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -148,15 +149,15 @@ public class Ideas extends Activity implements ActionBar.TabListener
       {
       case 0:
         args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, false, true, temp, weather).toBundle());
+            new SuggestArgs(count, Crowd.SINGLE, temp, weather).toBundle());
         break;
       case 1:
         args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, false, false, temp, weather).toBundle());
+            new SuggestArgs(count, Crowd.COUPLE, temp, weather).toBundle());
         break;
       case 2:
         args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, true, false, temp, weather).toBundle());
+            new SuggestArgs(count, Crowd.GROUP, temp, weather).toBundle());
         break;
       }
       fragment.setArguments(args);

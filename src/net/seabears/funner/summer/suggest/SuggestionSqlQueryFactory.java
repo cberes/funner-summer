@@ -39,15 +39,12 @@ public final class SuggestionSqlQueryFactory
 
   public static String[] args(SuggestArgs args)
   {
-    final String groupArg = args.isGroup() ? "1" : "0";
-    final String soloArg = args.isSingle() ? "1" : "0";
+    final String crowdArg = args.getCrowd().getCode();
     final String tempArg = String.valueOf(args.getTemperature());
     return new String[]
     {
-        groupArg,
-        groupArg,
-        soloArg,
-        soloArg,
+        crowdArg,
+        crowdArg,
         args.getWeather(),
         args.getWeather(),
         args.getWeather(),

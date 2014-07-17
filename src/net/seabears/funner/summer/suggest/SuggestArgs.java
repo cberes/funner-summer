@@ -1,5 +1,6 @@
 package net.seabears.funner.summer.suggest;
 
+import net.seabears.funner.db.Crowd;
 import android.os.Bundle;
 
 public class SuggestArgs extends PastimeActionArgs
@@ -10,9 +11,9 @@ public class SuggestArgs extends PastimeActionArgs
 
   private final int count;
 
-  public SuggestArgs(int count, boolean group, boolean single, int temperature, String weather)
+  public SuggestArgs(int count, Crowd crowd, int temperature, String weather)
   {
-    super(group, single, temperature, weather);
+    super(crowd, temperature, weather);
     this.count = count;
   }
 
@@ -21,8 +22,7 @@ public class SuggestArgs extends PastimeActionArgs
     PastimeActionArgs base = PastimeActionArgs.fromBundle(bundle);
     return new SuggestArgs(
         bundle.getInt(KEY_COUNT),
-        base.isGroup(),
-        base.isSingle(),
+        base.getCrowd(),
         base.getTemperature(),
         base.getWeather());
   }
