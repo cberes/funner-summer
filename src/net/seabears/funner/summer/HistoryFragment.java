@@ -49,7 +49,7 @@ public class HistoryFragment extends ProgressListFragment
     // creating a Cursor for the data being displayed.
     return new SQLiteCursorLoader(getActivity().getApplicationContext(),
         new FunnerDbHelper(getActivity().getApplicationContext()),
-        "select p._id as _id, p.action_name as action, datetime(a.performed) as performed "
+        "select p._id as _id, p.action_name as action, datetime(a.performed, 'localtime') as performed "
             + "from action a "
             + "join pastime p on a.pastime_id = p._id "
             + "join selection_method sm on a.method_id = sm._id "

@@ -192,7 +192,7 @@ public class Pastime extends Activity
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
     return new SQLiteCursorLoader(this, dbHelper,
-        "select a._id as _id, datetime(a.performed) as performed "
+        "select a._id as _id, datetime(a.performed, 'localtime') as performed "
             + "from action a "
             + "join selection_method sm on a.method_id = sm._id "
             + "where a.pastime_id = ? and sm.name <> 'ballast' "
