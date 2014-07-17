@@ -11,13 +11,13 @@ from pastime p
 left outer join (select b._id, b.action_count, b.action_count * 1.0 / c.total as p
 from (select a.pastime_id as _id, count(*) as action_count
 from action a
-where datetime('now', 'start of day', time(performed)) > datetime('now', '-3 hours')
-and datetime('now', 'start of day', time(performed)) < datetime('now', '+3 hours')
+where datetime('now', 'start of day', time(performed))
+between datetime('now', '-3 hours') and datetime('now', '+3 hours', '-1 seconds')
 group by a.pastime_id
 ) b, (select nullif(count(*), 0) as total
 from action a
-where datetime('now', 'start of day', time(performed)) > datetime('now', '-3 hours')
-and datetime('now', 'start of day', time(performed)) < datetime('now', '+3 hours')
+where datetime('now', 'start of day', time(performed))
+between datetime('now', '-3 hours') and datetime('now', '+3 hours', '-1 seconds')
 ) c) t on t._id = p._id
 -- compute percentage for stat: day
 left outer join (select b._id, b.action_count, b.action_count * 1.0 / c.total as p
@@ -65,13 +65,13 @@ from (select a.pastime_id as _id, count(*) as action_count from measurement m
 join statistic s on s._id = m.stat_id
 join action a on a._id = m.action_id
 where s.name = 'temperature'
-and m.value_integer between ? - 10 and ? + 10
+and m.value_integer between ? - 10 and ? + 9.999
 group by a.pastime_id
 ) b, (select nullif(count(*), 0) as total from measurement m
 join statistic s on s._id = m.stat_id
 join action a on a._id = m.action_id
 where s.name = 'temperature'
-and m.value_integer between ? - 10 and ? + 10
+and m.value_integer between ? - 10 and ? + 9.999
 ) c) temp on temp._id = p._id
 -- only active pastimes
 WHERE p.active = 1

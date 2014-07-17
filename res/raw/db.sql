@@ -54,11 +54,6 @@ INSERT INTO statistic
 ('weather', 'text'),
 ('crowd', 'text');
 
---
--- use relevant times, probably on a saturday
--- can add more action rows for multiple times
---
-
 INSERT INTO pastime
 (name, action_name, custom) VALUES
 ('running', 'Go running', 0),
@@ -96,7 +91,7 @@ INSERT INTO pastime
 ('ice skating', 'Go ice skating', 0),
 ('snowboarding', 'Go snowboarding', 0),
 ('snow tubing', 'Go snow tubing', 0),
-('skiing', 'Go skiing', 0),
+('skiing downhill', 'Go downhill skiing', 0),
 ('skydiving', 'Try skydiving', 0),
 ('ballooning', 'Enjoy a hot-air balloon ride', 0),
 ('bungee jumping', 'Try bungee jumping', 0),
@@ -123,7 +118,9 @@ INSERT INTO pastime
 ('bocce', 'Play bocce', 0),
 ('horseshoes', 'Play horseshoes', 0),
 ('darts', 'Play darts', 0),
-('billiards', 'Play a game of billiards', 0);
+('billiards', 'Play a game of billiards', 0),
+('ice skating outside', 'Go ice skating at an outdoor rink', 0),
+('skiing cross country', 'Go cross-country skiing', 0);
 
 INSERT INTO pastime_alias
 (name, pastime_id) VALUES
