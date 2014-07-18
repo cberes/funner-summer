@@ -19,11 +19,13 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.google.common.base.Preconditions;
 
 public class CsvDataImporter
 {
+  private static final boolean HEADER_ROW = true;
   private final Date day = new Date();
   private final Context context;
   private final SQLiteDatabase db;
@@ -153,10 +155,17 @@ public class CsvDataImporter
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
     String readLine = null;
+    boolean skippedHeaderRow = false;
     while ((readLine = br.readLine()) != null)
     {
       if (readLine.trim().isEmpty())
       {
+        continue;
+      }
+
+      if (HEADER_ROW && !skippedHeaderRow)
+      {
+        skippedHeaderRow = true;
         continue;
       }
 
@@ -211,7 +220,7 @@ public class CsvDataImporter
     values.put("name", name);
     values.put("action_name", action);
     values.put("custom", 0);
-    long pastimeId = db.insert("pastime", null, values);
+    long pastimeId = insert("pastime", values);
 
     // insert aliases
     for (String alias : aliases)
@@ -219,7 +228,7 @@ public class CsvDataImporter
       values.clear();
       values.put("name", alias);
       values.put("pastime_id", pastimeId);
-      db.insert("pastime_alias", null, values);
+      insert("pastime_alias", values);
     }
 
     // insert action rows
@@ -240,7 +249,7 @@ public class CsvDataImporter
       values.put("performed", datetimeFormat.format(calendar.getTime()));
       values.put("pastime_id", pastimeId);
       values.put("method_id", SelectionMethod.BALLAST.getId());
-      actionId = db.insert("action", null, values);
+      actionId = insert("action", values);
     }
 
     // insert temperatures
@@ -250,7 +259,7 @@ public class CsvDataImporter
       values.put("stat_id", Statistic.TEMPERATURE.getId());
       values.put("action_id", actionId);
       values.put("value_integer", temp);
-      actionId = db.insert("measurement", null, values);
+      actionId = insert("measurement", values);
     }
 
     // insert weather conditions
@@ -260,7 +269,7 @@ public class CsvDataImporter
       values.put("stat_id", Statistic.WEATHER.getId());
       values.put("action_id", actionId);
       values.put("value_text", condition);
-      actionId = db.insert("measurement", null, values);
+      actionId = insert("measurement", values);
     }
 
     // insert crowd conditions
@@ -270,17 +279,23 @@ public class CsvDataImporter
     if (single)
     {
       values.put("value_text", Crowd.SINGLE.getCode());
-      actionId = db.insert("measurement", null, values);
+      actionId = insert("measurement", values);
     }
     if (couple)
     {
       values.put("value_text", Crowd.COUPLE.getCode());
-      actionId = db.insert("measurement", null, values);
+      actionId = insert("measurement", values);
     }
     if (group)
     {
       values.put("value_text", Crowd.GROUP.getCode());
-      actionId = db.insert("measurement", null, values);
+      actionId = insert("measurement", values);
     }
+  }
+
+  private long insert(String table, ContentValues values)
+  {
+    Log.d(getClass().getSimpleName(), "Inserting into table " + table + ": " + values);
+    return db.insert(table, null, values);
   }
 }
