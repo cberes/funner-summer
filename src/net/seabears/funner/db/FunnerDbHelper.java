@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,11 +19,13 @@ public class FunnerDbHelper extends SQLiteOpenHelper
   // If you change the database schema, you must increment the database version.
   public static final int DATABASE_VERSION = 1;
   public static final String DATABASE_NAME = "Funner.db";
-  public final List<String> sqlQueries;
+  private final List<String> sqlQueries;
+  private final Context context;
 
   public FunnerDbHelper(Context context)
   {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    this.context = context;
 
     sqlQueries = new LinkedList<String>();
     InputStream is = context.getResources().openRawResource(R.raw.db);
@@ -64,6 +67,14 @@ public class FunnerDbHelper extends SQLiteOpenHelper
     for (String sqlQuery : sqlQueries)
     {
       db.execSQL(sqlQuery);
+    }
+
+    try
+    {
+      new CsvDataImporter(context, db, R.raw.data).importData();
+    } catch (IOException | ParseException e)
+    {
+      Log.e(getClass().getSimpleName(), e.getMessage(), e);
     }
   }
 
