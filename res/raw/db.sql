@@ -84,7 +84,7 @@ INSERT INTO pastime
 ('drive-in', 'Catch a movie at a drive-in', 0),
 ('softball', 'Join a softball league', 0),
 ('driving', 'Enjoy a road trip', 0),
-('skateboarding', 'Go skateboading', 0),
+('skateboarding', 'Go skateboarding', 0),
 ('roller skating', 'Go roller skating', 0),
 ('surfing', 'Go surfing', 0),
 ('tubing', 'Go tubing on a river', 0),
@@ -120,7 +120,8 @@ INSERT INTO pastime
 ('darts', 'Play darts', 0),
 ('billiards', 'Play a game of billiards', 0),
 ('ice skating outside', 'Go ice skating at an outdoor rink', 0),
-('skiing cross country', 'Go cross-country skiing', 0);
+('skiing cross country', 'Go cross-country skiing', 0),
+('star', 'Go stargazing', 0);
 
 INSERT INTO pastime_alias
 (name, pastime_id) VALUES
