@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -47,7 +46,7 @@ public class CsvDataImporter
       @Override
       public Object parse(String s)
       {
-        return s.split("\\s*;+\\s*");
+        return s.isEmpty() ? new String[0] : s.split("\\s*;+\\s*");
       }
     },
     TIMES(3)
@@ -55,7 +54,7 @@ public class CsvDataImporter
       @Override
       public Object parse(String s)
       {
-        return s.split("\\s+");
+        return s.isEmpty() ? new String[0] : s.split("\\s+");
       }
     },
     SINGLE(4)
@@ -87,7 +86,7 @@ public class CsvDataImporter
       @Override
       public Object parse(String s)
       {
-        return s.split("\\s+");
+        return s.isEmpty() ? new String[0] : s.split("\\s+");
       }
     },
     WEATHER(8)
@@ -95,7 +94,7 @@ public class CsvDataImporter
       @Override
       public Object parse(String s)
       {
-        return s.split("\\s+");
+        return s.isEmpty() ? new String[0] : s.split("\\s+");
       }
     };
 
@@ -243,7 +242,6 @@ public class CsvDataImporter
       calendar.clear(Calendar.SECOND);
       calendar.clear(Calendar.MILLISECOND);
       calendar.setTime(new Date(calendar.getTime().getTime() + time.getTime()));
-      calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
 
       values.clear();
       values.put("performed", datetimeFormat.format(calendar.getTime()));
@@ -259,7 +257,7 @@ public class CsvDataImporter
       values.put("stat_id", Statistic.TEMPERATURE.getId());
       values.put("action_id", actionId);
       values.put("value_integer", temp);
-      actionId = insert("measurement", values);
+      insert("measurement", values);
     }
 
     // insert weather conditions
@@ -269,7 +267,7 @@ public class CsvDataImporter
       values.put("stat_id", Statistic.WEATHER.getId());
       values.put("action_id", actionId);
       values.put("value_text", condition);
-      actionId = insert("measurement", values);
+      insert("measurement", values);
     }
 
     // insert crowd conditions
@@ -279,17 +277,17 @@ public class CsvDataImporter
     if (single)
     {
       values.put("value_text", Crowd.SINGLE.getCode());
-      actionId = insert("measurement", values);
+      insert("measurement", values);
     }
     if (couple)
     {
       values.put("value_text", Crowd.COUPLE.getCode());
-      actionId = insert("measurement", values);
+      insert("measurement", values);
     }
     if (group)
     {
       values.put("value_text", Crowd.GROUP.getCode());
-      actionId = insert("measurement", values);
+      insert("measurement", values);
     }
   }
 

@@ -53,6 +53,7 @@ public class Pastime extends Activity
   {
     SELECTION_METHODS = new HashMap<Class<?>, Long>(3);
     SELECTION_METHODS.put(Ideas.class, SelectionMethod.HISTORICAL.getId());
+    SELECTION_METHODS.put(RandomPastimes.class, SelectionMethod.RANDOM.getId());
     SELECTION_METHODS.put(Pastimes.class, SelectionMethod.MANUAL.getId());
     SELECTION_METHODS.put(History.class, SelectionMethod.MANUAL.getId());
     PARENTS = new HashSet<Class<?>>(SELECTION_METHODS.keySet());

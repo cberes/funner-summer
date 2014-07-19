@@ -70,7 +70,7 @@ public class ActionInsertTask
     values.clear();
     values.put("action_id", id);
     values.put("stat_id", Statistic.WEATHER.getId());
-    values.put("value_text", "rainy");
+    values.put("value_text", "rain");
     db.insert("measurement", null, values);
   }
 }

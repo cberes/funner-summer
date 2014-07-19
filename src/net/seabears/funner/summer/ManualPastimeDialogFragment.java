@@ -32,21 +32,21 @@ public class ManualPastimeDialogFragment extends DialogFragment
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     builder.setCancelable(false)
         .setMessage(R.string.pastime_manual_prompt)
-        .setPositiveButton(R.string.title_section3, new DialogInterface.OnClickListener()
+        .setPositiveButton(R.string.title_section_group, new DialogInterface.OnClickListener()
         {
           public void onClick(DialogInterface dialog, int id)
           {
             runInsert(new PastimeActionArgs(Crowd.GROUP, 0, null));
           }
         })
-        .setNeutralButton(R.string.title_section2, new DialogInterface.OnClickListener()
+        .setNeutralButton(R.string.title_section_couple, new DialogInterface.OnClickListener()
         {
           public void onClick(DialogInterface dialog, int id)
           {
             runInsert(new PastimeActionArgs(Crowd.COUPLE, 0, null));
           }
         })
-        .setNegativeButton(R.string.title_section1, new DialogInterface.OnClickListener()
+        .setNegativeButton(R.string.title_section_single, new DialogInterface.OnClickListener()
         {
           public void onClick(DialogInterface dialog, int id)
           {

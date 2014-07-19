@@ -9,16 +9,16 @@ import net.seabears.funner.summer.R;
 import android.content.Context;
 import android.util.Log;
 
-public final class SuggestionSqlQueryFactory
+public final class RandomSqlQueryFactory
 {
-  private SuggestionSqlQueryFactory()
+  private RandomSqlQueryFactory()
   {
     throw new UnsupportedOperationException("cannot instantiate " + getClass());
   }
 
   public static String query(Context context)
   {
-    InputStream is = context.getResources().openRawResource(R.raw.suggest);
+    InputStream is = context.getResources().openRawResource(R.raw.random);
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
     StringBuilder sqlQueryBuilder = new StringBuilder();
 
@@ -31,7 +31,7 @@ public final class SuggestionSqlQueryFactory
       }
     } catch (IOException e)
     {
-      Log.e(SuggestionSqlQueryFactory.class.getSimpleName(), e.getMessage(), e);
+      Log.e(RandomSqlQueryFactory.class.getSimpleName(), e.getMessage(), e);
     }
 
     return sqlQueryBuilder.toString();
@@ -44,13 +44,9 @@ public final class SuggestionSqlQueryFactory
     return new String[]
     {
         crowdArg,
-        crowdArg,
+        tempArg,
+        tempArg,
         args.getWeather(),
-        args.getWeather(),
-        tempArg,
-        tempArg,
-        tempArg,
-        tempArg,
         String.valueOf(args.getCount())
     };
   }

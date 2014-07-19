@@ -13,10 +13,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
 import android.view.MenuItem;
 
-public class Ideas extends Activity implements ActionBar.TabListener
+public class RandomPastimes extends Activity implements ActionBar.TabListener
 {
   /**
    * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -40,6 +39,7 @@ public class Ideas extends Activity implements ActionBar.TabListener
 
     // Set up the action bar.
     final ActionBar actionBar = getActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(true);
     actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
     // Create the adapter that will return a fragment for each of the three
@@ -77,37 +77,18 @@ public class Ideas extends Activity implements ActionBar.TabListener
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu)
-  {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.ideas, menu);
-    return true;
-  }
-
-  @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-    if (id == R.id.action_settings)
+    final int id = item.getItemId();
+    if (id == android.R.id.home)
     {
-      return true;
-    }
-    else if (id == R.id.action_history)
-    {
-      startActivity(new Intent(this, History.class));
-      return true;
-    }
-    else if (id == R.id.action_pastimes)
-    {
-      startActivity(new Intent(this, Pastimes.class));
-      return true;
-    }
-    else if (id == R.id.action_random)
-    {
-      startActivity(new Intent(this, RandomPastimes.class));
+      // This ID represents the Home or Up button. In the case of this
+      // activity, the Up button is shown. For
+      // more details, see the Navigation pattern on Android Design:
+      //
+      // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+      //
+      navigateUpTo(new Intent(this, Ideas.class));
       return true;
     }
     return super.onOptionsItemSelected(item);
@@ -150,7 +131,7 @@ public class Ideas extends Activity implements ActionBar.TabListener
       IdeasFragment fragment = new IdeasFragment();
       Bundle args = new Bundle();
       args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
-      args.putSerializable(IdeasFragment.ARG_PARENT, Ideas.class);
+      args.putSerializable(IdeasFragment.ARG_PARENT, RandomPastimes.class);
       switch (position)
       {
       case 0:

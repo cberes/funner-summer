@@ -1,9 +1,15 @@
 package net.seabears.funner.summer;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import net.seabears.funner.db.FunnerDbHelper;
+import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -17,12 +23,18 @@ import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 public class IdeasFragment extends ProgressListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
 {
+  public static final String ARG_PARENT = "parent";
+
+  public static final String ARG_QUERY_OPTIONS = "query_options";
+
   /**
    * The fragment argument representing the section number for this fragment.
    */
   public static final String ARG_SECTION_NUMBER = "section_number";
 
-  public static final String ARG_QUERY_OPTIONS = "query_options";
+  private static final Set<Class<?>> PARENTS = new HashSet<Class<?>>(Arrays.asList(Ideas.class, RandomPastimes.class));
+
+  private Class<?> parent;
 
   // This is the Adapter being used to display the list's data
   private SimpleCursorAdapter mAdapter;
@@ -33,6 +45,13 @@ public class IdeasFragment extends ProgressListFragment
   public void onActivityCreated(Bundle savedInstanceState)
   {
     super.onActivityCreated(savedInstanceState);
+
+    parent = (Class<?>) getArguments().getSerializable(ARG_PARENT);
+
+    if (!PARENTS.contains(parent))
+    {
+      throw new IllegalStateException(getClass() + " " + ARG_PARENT + " argument " + parent + " is invalid.");
+    }
 
     // For the cursor adapter, specify which columns go into which views
     final String[] fromColumns = { "action" };
@@ -57,11 +76,14 @@ public class IdeasFragment extends ProgressListFragment
     // Now create and return a CursorLoader that will take care of
     // creating a Cursor for the data being displayed.
     suggestArgs = SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS));
+    final Context context = getActivity().getApplicationContext();
     return new SQLiteCursorLoader(
-        getActivity().getApplicationContext(),
-        new FunnerDbHelper(getActivity().getApplicationContext()),
-        SuggestionSqlQueryFactory.query(getActivity().getApplicationContext()),
-        SuggestionSqlQueryFactory.args(suggestArgs));
+        context,
+        new FunnerDbHelper(context),
+        Ideas.class.equals(parent) ? SuggestionSqlQueryFactory.query(context)
+            : RandomSqlQueryFactory.query(context),
+        Ideas.class.equals(parent) ? SuggestionSqlQueryFactory.args(suggestArgs)
+            : RandomSqlQueryFactory.args(suggestArgs));
   }
 
   // Called when a previously created loader has finished loading
@@ -91,7 +113,7 @@ public class IdeasFragment extends ProgressListFragment
   {
     Intent intent = new Intent(this.getActivity(), Pastime.class);
     intent.putExtra(Pastime.ARG_PASTIME_ID, id);
-    intent.putExtra(Pastime.ARG_PARENT, Ideas.class);
+    intent.putExtra(Pastime.ARG_PARENT, parent);
     intent.putExtra(Pastime.ARG_PASTIME_ARGS, suggestArgs);
     startActivity(intent);
   }
