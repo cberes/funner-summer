@@ -1,6 +1,7 @@
 package net.seabears.funner.summer;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,6 +39,8 @@ public class IdeasFragment extends ProgressListFragment
 
   // This is the Adapter being used to display the list's data
   private SimpleCursorAdapter mAdapter;
+
+  private Date lastRefreshed;
 
   private SuggestArgs suggestArgs;
 
@@ -91,6 +94,7 @@ public class IdeasFragment extends ProgressListFragment
   {
     // Swap the new cursor in. (The framework will take care of closing the
     // old cursor once we return.)
+    lastRefreshed = new Date();
     mAdapter.swapCursor(data);
     if (data.getCount() == 0)
     {
@@ -116,5 +120,16 @@ public class IdeasFragment extends ProgressListFragment
     intent.putExtra(Pastime.ARG_PARENT, parent);
     intent.putExtra(Pastime.ARG_PASTIME_ARGS, suggestArgs);
     startActivity(intent);
+  }
+
+  public void refresh()
+  {
+    getLoaderManager().destroyLoader(0);
+    getLoaderManager().initLoader(0, getArguments(), this);
+  }
+
+  public Date getLastRefreshed()
+  {
+    return lastRefreshed;
   }
 }

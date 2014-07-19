@@ -1,5 +1,7 @@
 package net.seabears.funner.summer;
 
+import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.Locale;
 
 import net.seabears.funner.db.Crowd;
@@ -13,7 +15,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.util.SparseArray;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 public class RandomPastimes extends Activity implements ActionBar.TabListener
 {
@@ -77,6 +83,14 @@ public class RandomPastimes extends Activity implements ActionBar.TabListener
   }
 
   @Override
+  public boolean onCreateOptionsMenu(Menu menu)
+  {
+    // Inflate the menu; this adds items to the action bar if it is present.
+    getMenuInflater().inflate(R.menu.random, menu);
+    return true;
+  }
+
+  @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
     final int id = item.getItemId();
@@ -89,6 +103,11 @@ public class RandomPastimes extends Activity implements ActionBar.TabListener
       // http://developer.android.com/design/patterns/navigation.html#up-vs-back
       //
       navigateUpTo(new Intent(this, Ideas.class));
+      return true;
+    }
+    else if (id == R.id.action_refresh)
+    {
+      mSectionsPagerAdapter.refreshFragments();
       return true;
     }
     return super.onOptionsItemSelected(item);
@@ -116,9 +135,26 @@ public class RandomPastimes extends Activity implements ActionBar.TabListener
    */
   public class SectionsPagerAdapter extends FragmentPagerAdapter
   {
+    private SparseArray<Date> fragmentsToRefresh = new SparseArray<Date>(getCount());
+
+    private Fragment primary;
+
+    // start with an invalid index
+    private int primaryPosition = -1;
+
     public SectionsPagerAdapter(FragmentManager fm)
     {
       super(fm);
+    }
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object)
+    {
+      super.setPrimaryItem(container, position, object);
+
+      // get the primary item so we can refresh it if we need to
+      primary = (Fragment) object;
+      primaryPosition = position;
     }
 
     @Override
@@ -171,6 +207,70 @@ public class RandomPastimes extends Activity implements ActionBar.TabListener
         return getString(R.string.title_section_group).toUpperCase(l);
       }
       return null;
+    }
+
+    public void refreshFragments()
+    {
+      final Date date = new Date();
+      for (int i = 0; i < getCount(); ++i)
+      {
+        if (i != primaryPosition)
+        {
+          fragmentsToRefresh.put(i, date);
+        }
+      }
+
+      if (primary instanceof IdeasFragment)
+      {
+        ((IdeasFragment) primary).refresh();
+      }
+    }
+
+    private Fragment getFragment(int viewId, int position)
+    {
+      try
+      {
+        // the tag name is created by a private method
+        Method method = FragmentPagerAdapter.class.getDeclaredMethod("makeFragmentName", Integer.TYPE, Long.TYPE);
+        if (method != null)
+        {
+          method.setAccessible(true);
+          String tag = (String) method.invoke(null, viewId, position);
+          return getFragmentManager().findFragmentByTag(tag);
+        }
+      } catch (Exception e)
+      {
+        // log the error and show other methods
+        Log.e(getClass().getSimpleName(), e.getMessage(), e);
+        Log.d(getClass().getSimpleName(), "Available methods:");
+        for (Method m : FragmentPagerAdapter.class.getDeclaredMethods())
+        {
+          Log.d(getClass().getSimpleName(), m.toGenericString());
+        }
+      }
+      return null;
+    }
+
+    @Override
+    public void startUpdate(ViewGroup container)
+    {
+      super.startUpdate(container);
+      for (int i = 0; i < getCount(); ++i)
+      {
+        Fragment fragment = getFragment(container.getId(), i);
+        if (fragment instanceof IdeasFragment)
+        {
+          // refresh the fragment if it exists and is out of date
+          IdeasFragment ideasFragment = (IdeasFragment) fragment;
+          final Date refreshed = ideasFragment.getLastRefreshed();
+          final Date date = fragmentsToRefresh.get(i);
+          if (date != null && refreshed != null && date.after(refreshed))
+          {
+            Log.d(getClass().getSimpleName(), "Refreshing fragment at position " + i);
+            ideasFragment.refresh();
+          }
+        }
+      }
     }
   }
 }

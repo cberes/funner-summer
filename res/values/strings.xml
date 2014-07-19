@@ -4,6 +4,7 @@
     <string name="title_section_single">Solo</string>
     <string name="title_section_couple">Couple</string>
     <string name="title_section_group">Group</string>
+    <string name="action_refresh">Refresh</string>
     <string name="action_pastimes">All activities</string>
     <string name="action_random">Random activities</string>
     <string name="action_history">History</string>
