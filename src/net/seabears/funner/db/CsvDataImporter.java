@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -236,6 +237,7 @@ public class CsvDataImporter
     for (Date time : times)
     {
       Calendar calendar = Calendar.getInstance();
+      calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
       calendar.setTime(day);
       calendar.clear(Calendar.HOUR);
       calendar.clear(Calendar.MINUTE);

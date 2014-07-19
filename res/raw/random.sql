@@ -4,8 +4,10 @@ join selection_method sm on sm.name = 'ballast'
 join statistic sc on sc.name = 'crowd'
 join statistic st on st.name = 'temperature'
 join statistic sw on sw.name = 'weather'
+-- only active pastimes
+where p.active = 1
 -- time
-where p._id in (select pastime_id
+and p._id in (select pastime_id
 from action
 where method_id = sm._id
 and datetime('now', 'start of day', time(performed))

@@ -70,7 +70,7 @@ where s.name = 'temperature'
 and m.value_integer between ? - 10 and ? + 9.999
 ) c) temp on temp._id = p._id
 -- only active pastimes
-WHERE p.active = 1
--- order by total probability (prb)
-ORDER BY 4 DESC, RANDOM()
-LIMIT ?
+where p.active = 1
+-- order by total probability
+order by 4 desc, random()
+limit ?
