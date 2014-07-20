@@ -1,14 +1,19 @@
 package net.seabears.funner.summer;
 
+import java.text.ParseException;
+
+import net.seabears.funner.ContextualDateFormatter;
 import net.seabears.funner.db.FunnerDbHelper;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 
@@ -32,9 +37,29 @@ public class HistoryFragment extends ProgressListFragment
 
     // Create an empty adapter we will use to display the loaded data.
     // We pass null for the cursor, then update it in onLoadFinished()
+    final ContextualDateFormatter formatter = new ContextualDateFormatter(getActivity());
     mAdapter = new SimpleCursorAdapter(getActivity(),
         android.R.layout.simple_list_item_2, null,
-        fromColumns, toViews, 0);
+        fromColumns, toViews, 0)
+    {
+      @Override
+      public void setViewText(TextView v, String text)
+      {
+        if (v.getId() == android.R.id.text2)
+        {
+          try
+          {
+            super.setViewText(v, formatter.format(text));
+            return;
+          }
+          catch (ParseException e)
+          {
+            Log.e(getClass().getSimpleName(), e.getMessage(), e);
+          }
+        }
+        super.setViewText(v, text);
+      }
+    };
     setListAdapter(mAdapter);
 
     // Prepare the loader. Either re-connect with an existing one,

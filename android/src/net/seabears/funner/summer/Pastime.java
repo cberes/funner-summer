@@ -1,5 +1,6 @@
 package net.seabears.funner.summer;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.seabears.funner.ContextualDateFormatter;
 import net.seabears.funner.db.ActionInsertTask;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.db.SelectionMethod;
@@ -19,6 +21,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -102,9 +105,25 @@ public class Pastime extends Activity
     // history
     ListView historyView = (ListView) findViewById(R.id.pastime_history);
     historyView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+    final ContextualDateFormatter formatter = new ContextualDateFormatter(this);
     mAdapter = new SimpleCursorAdapter(this,
         android.R.layout.simple_list_item_1, null,
-        new String[] { "performed" }, new int[] { android.R.id.text1 }, 0);
+        new String[] { "performed" }, new int[] { android.R.id.text1 }, 0)
+    {
+      @Override
+      public void setViewText(TextView v, String text)
+      {
+        try
+        {
+          super.setViewText(v, formatter.format(text));
+        }
+        catch (ParseException e)
+        {
+          Log.e(getClass().getSimpleName(), e.getMessage(), e);
+          super.setViewText(v, text);
+        }
+      }
+    };
     historyView.setAdapter(mAdapter);
     getLoaderManager().initLoader(0, null, this);
 
