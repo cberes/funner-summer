@@ -19,9 +19,11 @@ import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -71,16 +73,23 @@ public class WeatherPullService extends IntentService implements
    */
   public static final String EXTENDED_DATA_RESULT = WeatherPullService.class.getName() + ".RESULT";
 
-  public static void observeWeather(Activity activity)
+  public static void observeWeather(Activity activity, WeatherReceiver receiver)
   {
+    // register a receiver
+    // regardless of how the weather is retrieved, we'll send it via broadcast
+    LocalBroadcastManager.getInstance(activity).registerReceiver(receiver, new IntentFilter(RESULT_ACTION));
+
     Weather weather = readWeatherFromPreferences(activity);
     if (weather != null)
     {
-      broadcastResult(activity, weather, 0, TimeUnit.SECONDS);
-      return;
+      // weather was cached
+      broadcastResult(activity, weather);
     }
-
-    activity.startService(new Intent(activity, WeatherPullService.class));
+    else
+    {
+      // weather needs to be retrieved
+      activity.startService(new Intent(activity, WeatherPullService.class));
+    }
   }
 
   public WeatherPullService()
@@ -93,26 +102,31 @@ public class WeatherPullService extends IntentService implements
   @Override
   protected void onHandleIntent(Intent intent)
   {
-    Location location = findLocationWithFallback(getDefaultLocation(), 10, TimeUnit.SECONDS);
-    broadcastStatus(this, 50);
-    Weather weather = findWeatherWithFallback(location, null, 10, TimeUnit.SECONDS);
-    broadcastStatus(this, 99);
+    Weather weather = readWeatherFromPreferences(this);
     if (weather == null)
     {
-      // shorter cache time because the result was invalid
-      broadcastResult(this, getDefaultWeather(), 15, TimeUnit.MINUTES);
+      Location location = findLocationWithFallback(getDefaultLocation(), 10, TimeUnit.SECONDS);
+      broadcastStatus(this, 50);
+      weather = findWeatherWithFallback(location, null, 10, TimeUnit.SECONDS);
+      broadcastStatus(this, 99);
+      if (weather == null)
+      {
+        // shorter cache time because the result was invalid
+        weather = getDefaultWeather();
+        writeWeatherToPreferences(this, weather, 15, TimeUnit.MINUTES);
+      }
+      else
+      {
+        writeWeatherToPreferences(this, weather, 45, TimeUnit.MINUTES);
+      }
     }
-    else
-    {
-      // longer cache time because the result was valid
-      broadcastResult(this, weather, 45, TimeUnit.MINUTES);
-    }
+    broadcastResult(this, weather);
     broadcastStatus(this, 100);
   }
 
-  private static Weather readWeatherFromPreferences(Activity activity)
+  private static Weather readWeatherFromPreferences(Context context)
   {
-    final SharedPreferences prefs = activity.getPreferences(Activity.MODE_PRIVATE);
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     final String condition = prefs.getString(PREF_KEY_WEATHER_CONDITION, null);
     final float temperature = prefs.getFloat(PREF_KEY_WEATHER_TEMPERATURE, Float.NaN);
     if (System.currentTimeMillis() <= prefs.getLong(PREF_KEY_WEATHER_EXPIRATION, 0)
@@ -123,9 +137,9 @@ public class WeatherPullService extends IntentService implements
     return null;
   }
 
-  public static void writeWeatherToPreferences(Activity activity, Weather weather, long ttl, TimeUnit unit)
+  private static void writeWeatherToPreferences(Context context, Weather weather, long ttl, TimeUnit unit)
   {
-    activity.getPreferences(Activity.MODE_PRIVATE).edit()
+    PreferenceManager.getDefaultSharedPreferences(context).edit()
         .putString(PREF_KEY_WEATHER_CONDITION, weather.getCondition())
         .putFloat(PREF_KEY_WEATHER_TEMPERATURE, (float) weather.getTemperature())
         .putLong(PREF_KEY_WEATHER_EXPIRATION, unit.toMillis(ttl) + System.currentTimeMillis())
@@ -134,22 +148,15 @@ public class WeatherPullService extends IntentService implements
 
   private static void broadcastStatus(Context context, int status)
   {
-    // Creates a new Intent containing a URI object BROADCAST_ACTION is a custom
-    // Intent action
     Intent localIntent = new Intent(BROADCAST_ACTION)
         .putExtra(EXTENDED_DATA_STATUS, status);
-    // Broadcasts the Intent to receivers in this app.
     LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
   }
 
-  private static void broadcastResult(Context context, Weather result, long ttl, TimeUnit unit)
+  private static void broadcastResult(Context context, Weather result)
   {
-    // Creates a new Intent containing a URI object BROADCAST_ACTION is a custom
-    // Intent action
     Intent localIntent = new Intent(RESULT_ACTION)
-        .putExtra(EXTENDED_DATA_RESULT, result)
-        .putExtra(EXTENDED_DATA_STATUS, unit.toMillis(ttl));
-    // Broadcasts the Intent to receivers in this app.
+        .putExtra(EXTENDED_DATA_RESULT, result);
     LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
   }
 
@@ -269,27 +276,10 @@ public class WeatherPullService extends IntentService implements
     @Override
     public void onReceive(Context context, Intent intent)
     {
-      // get result from intent
       final Weather weather = (Weather) intent.getSerializableExtra(EXTENDED_DATA_RESULT);
-
-      // if activity is not dead, use it to cache the result
-      // IDK if the destroyed-check is necessary
-      Activity activity = getActivity();
-      if (!activity.isDestroyed())
-      {
-        final long cacheTime = intent.getLongExtra(EXTENDED_DATA_STATUS, 0L);
-        if (cacheTime > 0)
-        {
-          writeWeatherToPreferences(activity, weather, System.currentTimeMillis() + cacheTime, TimeUnit.MILLISECONDS);
-        }
-      }
-
-      // call the more specific handler
       onReceiveWeather(context, weather);
     }
 
-    protected abstract Activity getActivity();
-
-    public abstract void onReceiveWeather(Context context, Weather weather);
+    protected abstract void onReceiveWeather(Context context, Weather weather);
   }
 }
