@@ -143,27 +143,25 @@ public class Ideas extends Activity implements ActionBar.TabListener
     @Override
     public Fragment getItem(int position)
     {
-      final int count = 7;
-      final int temp = 70;
-      final String weather = "rain";
+      final int count = IdeasFragment.LIST_COUNT_DEFAULT;
+      final IdeasFragment fragment = new IdeasFragment();
+      final Bundle args = new Bundle();
 
-      IdeasFragment fragment = new IdeasFragment();
-      Bundle args = new Bundle();
       args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
       args.putSerializable(IdeasFragment.ARG_PARENT, Ideas.class);
       switch (position)
       {
       case 0:
         args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.SINGLE, temp, weather).toBundle());
+            new SuggestArgs(count, Crowd.SINGLE, 0, null).toBundle());
         break;
       case 1:
         args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.COUPLE, temp, weather).toBundle());
+            new SuggestArgs(count, Crowd.COUPLE, 0, null).toBundle());
         break;
       case 2:
         args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.GROUP, temp, weather).toBundle());
+            new SuggestArgs(count, Crowd.GROUP, 0, null).toBundle());
         break;
       }
       fragment.setArguments(args);

@@ -1,4 +1,4 @@
-package net.seabears.funner.summer;
+package net.seabears.funner.weather;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -37,13 +37,13 @@ public class WeatherPullService extends IntentService implements
     GooglePlayServicesClient.ConnectionCallbacks,
     GooglePlayServicesClient.OnConnectionFailedListener
 {
-  private static final String WEATHER_URL = "http://ilium/funner/api/weather/summary?lat=%f&lng=%f";
+  private static final String WEATHER_URL = "http://ilium:8080/funner/api/weather/summary?lat=%f&lng=%f";
 
   private static final String PREF_KEY_WEATHER_CONDITION = "weather_condition";
 
   private static final String PREF_KEY_WEATHER_TEMPERATURE = "weather_temperature";
 
-  private static final String PREF_KEY_WEATHER_EXPIRATION = "weather_temperature";
+  private static final String PREF_KEY_WEATHER_EXPIRATION = "weather_expiration";
 
   private LocationClient mLocationClient;
 
@@ -106,8 +106,10 @@ public class WeatherPullService extends IntentService implements
     if (weather == null)
     {
       Location location = findLocationWithFallback(getDefaultLocation(), 10, TimeUnit.SECONDS);
+      Log.i(getClass().getSimpleName(), "Got location: " + location);
       broadcastStatus(this, 50);
       weather = findWeatherWithFallback(location, null, 10, TimeUnit.SECONDS);
+      Log.i(getClass().getSimpleName(), "Got weather: " + weather);
       broadcastStatus(this, 99);
       if (weather == null)
       {
@@ -181,6 +183,8 @@ public class WeatherPullService extends IntentService implements
   {
     URL url = new URL(String.format(WEATHER_URL, location.getLatitude(), location.getLongitude()));
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod("GET");
+    connection.setRequestProperty("Accept", "application/json");
     connection.setConnectTimeout((int) unit.toMillis(timeout) / 3);
     connection.setReadTimeout((int) unit.toMillis(timeout) - (int) unit.toMillis(timeout) / 3);
     try

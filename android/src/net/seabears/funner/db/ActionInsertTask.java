@@ -63,14 +63,14 @@ public class ActionInsertTask
     values.clear();
     values.put("action_id", id);
     values.put("stat_id", Statistic.TEMPERATURE.getId());
-    values.put("value_integer", 70);
+    values.put("value_integer", pastimeArgs.getTemperature());
     db.insert("measurement", null, values);
 
     // add weather measurement
     values.clear();
     values.put("action_id", id);
     values.put("stat_id", Statistic.WEATHER.getId());
-    values.put("value_text", "rain");
+    values.put("value_text", pastimeArgs.getWeather());
     db.insert("measurement", null, values);
   }
 }

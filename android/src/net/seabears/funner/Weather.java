@@ -40,4 +40,13 @@ public class Weather implements Serializable
   {
     this.temperature = temperature;
   }
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder("Weather [")
+        .append("condition=").append(condition)
+        .append(", temperature=").append(temperature)
+        .append("]").toString();
+  }
 }

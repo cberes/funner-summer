@@ -1,11 +1,12 @@
-package net.seabears.funner.summer;
+package net.seabears.funner.weather;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import net.seabears.funner.Weather;
-import net.seabears.funner.summer.WeatherPullService.WeatherReceiver;
+import net.seabears.funner.weather.WeatherPullService.WeatherReceiver;
 import android.content.Context;
+import android.util.Log;
 
 public class BlockingWeatherReceiver extends WeatherReceiver
 {
@@ -16,6 +17,7 @@ public class BlockingWeatherReceiver extends WeatherReceiver
   @Override
   protected void onReceiveWeather(Context context, Weather weather)
   {
+    Log.i(getClass().getSimpleName(), "Received weather: " + weather);
     this.weather = weather;
     this.received.countDown();
   }

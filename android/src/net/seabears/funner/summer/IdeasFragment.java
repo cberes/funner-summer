@@ -5,10 +5,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.seabears.funner.Weather;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
+import net.seabears.funner.weather.BlockOnWeatherSQLiteCursorLoader;
+import net.seabears.funner.weather.BlockingWeatherReceiver;
+import net.seabears.funner.weather.WeatherPullService;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,11 +23,11 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.ListView;
 
-import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
-
 public class IdeasFragment extends ProgressListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
 {
+  public static final int LIST_COUNT_DEFAULT = 7;
+
   public static final String ARG_PARENT = "parent";
 
   public static final String ARG_QUERY_OPTIONS = "query_options";
@@ -44,6 +48,8 @@ public class IdeasFragment extends ProgressListFragment
 
   private SuggestArgs suggestArgs;
 
+  private final BlockingWeatherReceiver weatherReceiver = new BlockingWeatherReceiver();
+
   @Override
   public void onActivityCreated(Bundle savedInstanceState)
   {
@@ -55,6 +61,8 @@ public class IdeasFragment extends ProgressListFragment
     {
       throw new IllegalStateException(getClass() + " " + ARG_PARENT + " argument " + parent + " is invalid.");
     }
+
+    WeatherPullService.observeWeather(getActivity(), weatherReceiver);
 
     // For the cursor adapter, specify which columns go into which views
     final String[] fromColumns = { "action" };
@@ -80,13 +88,22 @@ public class IdeasFragment extends ProgressListFragment
     // creating a Cursor for the data being displayed.
     suggestArgs = SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS));
     final Context context = getActivity().getApplicationContext();
-    return new SQLiteCursorLoader(
+    return new BlockOnWeatherSQLiteCursorLoader(
         context,
         new FunnerDbHelper(context),
         Ideas.class.equals(parent) ? SuggestionSqlQueryFactory.query(context)
             : RandomSqlQueryFactory.query(context),
-        Ideas.class.equals(parent) ? SuggestionSqlQueryFactory.args(suggestArgs)
-            : RandomSqlQueryFactory.args(suggestArgs));
+        weatherReceiver)
+    {
+      @Override
+      protected String[] getArgs(Weather weather)
+      {
+        suggestArgs = new SuggestArgs(suggestArgs.getCount(),
+            suggestArgs.getCrowd(), (int) weather.getTemperature(), weather.getCondition());
+        return Ideas.class.equals(parent) ? SuggestionSqlQueryFactory.args(suggestArgs)
+            : RandomSqlQueryFactory.args(suggestArgs);
+      }
+    };
   }
 
   // Called when a previously created loader has finished loading
