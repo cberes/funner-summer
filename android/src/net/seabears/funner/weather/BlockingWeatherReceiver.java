@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import net.seabears.funner.Weather;
 import net.seabears.funner.weather.WeatherPullService.WeatherReceiver;
 import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class BlockingWeatherReceiver extends WeatherReceiver
@@ -18,6 +19,7 @@ public class BlockingWeatherReceiver extends WeatherReceiver
   protected void onReceiveWeather(Context context, Weather weather)
   {
     Log.i(getClass().getSimpleName(), "Received weather: " + weather);
+    LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
     this.weather = weather;
     this.received.countDown();
   }

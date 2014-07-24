@@ -22,4 +22,6 @@
     <string name="pastime_recorded">Recorded your activity. Have fun!</string>
     <string name="pastime_manual_prompt">Will you be doing this activity alone, with one other person, or with a group?</string>
     <string name="pastime_search_prompt">Need some help to</string>
+    <string name="pastime_progress_title">Please wait &#8230;</string>
+    <string name="pastime_progress">Updating your activity history</string>
 </resources>

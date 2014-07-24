@@ -13,6 +13,8 @@ import net.seabears.funner.db.ActionInsertTask;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.db.SelectionMethod;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
+import net.seabears.funner.weather.BlockingWeatherReceiver;
+import net.seabears.funner.weather.WeatherPullService;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -33,7 +35,6 @@ import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 
@@ -159,18 +160,20 @@ public class Pastime extends Activity
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         final long pastimeId = Pastime.this.id;
         final long selectionMethodId = SELECTION_METHODS.get(parent);
+        final ActionInsertTask task = new ActionInsertTask(db, pastimeId, selectionMethodId);
+        final BlockingWeatherReceiver weatherReceiver = new BlockingWeatherReceiver();
+        final ActionInsertInBackgroundTask backgroundTask = new ActionInsertInBackgroundTask(Pastime.this, parent, task, weatherReceiver);
+        WeatherPullService.observeWeather(Pastime.this, weatherReceiver);
 
-        // get extra arguments if we don't have them
         if (pastimeArgs == null)
         {
-          ActionInsertTask task = new ActionInsertTask(db, pastimeId, selectionMethodId);
-          new ManualPastimeDialogFragment(Pastime.this, parent, task).show(getFragmentManager(), null);
+          // prompt for crowd setting
+          new ManualPastimeDialogFragment(backgroundTask).show(getFragmentManager(), null);
         }
         else
         {
-          new ActionInsertTask(db, pastimeId, selectionMethodId, pastimeArgs).insert();
-          Toast.makeText(Pastime.this, R.string.pastime_recorded, Toast.LENGTH_LONG).show();
-          navigateUpTo(new Intent(Pastime.this, parent));
+          // insert into database in background
+          backgroundTask.execute(pastimeArgs.getCrowd());
         }
       }
     });
