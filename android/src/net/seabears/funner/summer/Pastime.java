@@ -168,8 +168,7 @@ public class Pastime extends Activity
         }
         else
         {
-          ActionInsertTask task = new ActionInsertTask(db, pastimeId, selectionMethodId, pastimeArgs);
-          task.insert();
+          new ActionInsertTask(db, pastimeId, selectionMethodId, pastimeArgs).insert();
           Toast.makeText(Pastime.this, R.string.pastime_recorded, Toast.LENGTH_LONG).show();
           navigateUpTo(new Intent(Pastime.this, parent));
         }
