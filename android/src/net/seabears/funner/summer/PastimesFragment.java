@@ -2,6 +2,7 @@ package net.seabears.funner.summer;
 
 import net.seabears.funner.db.FunnerDbHelper;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 
@@ -24,7 +26,8 @@ public class PastimesFragment extends ProgressListFragment
     super.onActivityCreated(savedInstanceState);
 
     // For the cursor adapter, specify which columns go into which views
-    final String[] fromColumns = { "action" };
+    // SimpleCursorAdapter can have more columns than resource IDs
+    final String[] fromColumns = { "action", "active" };
     // The TextView in simple_list_item_1
     final int[] toViews = { android.R.id.text1 };
 
@@ -32,7 +35,22 @@ public class PastimesFragment extends ProgressListFragment
     // We pass null for the cursor, then update it in onLoadFinished()
     mAdapter = new SimpleCursorAdapter(getActivity(),
         android.R.layout.simple_list_item_1, null,
-        fromColumns, toViews, 0);
+        fromColumns, toViews, 0)
+    {
+      @Override
+      public void bindView(View view, Context context, Cursor cursor)
+      {
+        super.bindView(view, context, cursor);
+
+        // apply a different style to inactive items
+        final View v = view.findViewById(toViews[0]);
+        final boolean active = cursor.getInt(cursor.getColumnIndex(fromColumns[1])) != 0;
+        if (v instanceof TextView && !active)
+        {
+          ((TextView) v).setTextAppearance(context, R.style.textAppearanceInactiveListItemSmall);
+        }
+      }
+    };
     setListAdapter(mAdapter);
 
     // Prepare the loader. Either re-connect with an existing one,
@@ -47,7 +65,7 @@ public class PastimesFragment extends ProgressListFragment
     // creating a Cursor for the data being displayed.
     return new SQLiteCursorLoader(getActivity().getApplicationContext(),
         new FunnerDbHelper(getActivity().getApplicationContext()),
-        "select _id, action_name as action from pastime order by name",
+        "select _id, action_name as action, active from pastime order by name",
         new String[0]);
   }
 

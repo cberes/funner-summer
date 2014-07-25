@@ -17,4 +17,10 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <!-- Inactive list item style -->
+    <style name="textAppearanceInactiveListItemSmall" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#aaa</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
 </resources>
