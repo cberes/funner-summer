@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -56,6 +59,33 @@ public class PastimesFragment extends ProgressListFragment
     // Prepare the loader. Either re-connect with an existing one,
     // or start a new one.
     getLoaderManager().initLoader(0, getArguments(), this);
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState)
+  {
+    super.onCreate(savedInstanceState);
+    setHasOptionsMenu(true);
+  }
+
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+  {
+    inflater.inflate(R.menu.pastime, menu);
+    super.onCreateOptionsMenu(menu, inflater);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+  {
+    final int id = item.getItemId();
+    if (id == R.id.action_pastime_create)
+    {
+      Intent intent = new Intent(getActivity(), PastimeEditor.class);
+      intent.putExtra(PastimeEditor.ARG_PARENT, Pastimes.class);
+      startActivity(intent);
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override

@@ -9,6 +9,9 @@
     <string name="action_random">Random activities</string>
     <string name="action_history">History</string>
     <string name="action_settings">Settings</string>
+    <string name="action_pastime_create">Create activity</string>
+    <string name="action_pastime_edit">Edit activity</string>
+    <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="at">at</string>
@@ -24,4 +27,17 @@
     <string name="pastime_search_prompt">Need some help to</string>
     <string name="pastime_progress_title">Please wait &#8230;</string>
     <string name="pastime_progress">Updating your activity history</string>
+    <string name="pastime_create">Create</string>
+    <string name="pastime_update">Update</string>
+    <string name="pastime_prompt">Prompt</string>
+    <string name="pastime_prompt_description">Enter a prompt for this activity, such as \"Enjoy a bicycle ride\" or \"Fly a kite\"</string>
+    <string name="pastime_prompt_example">Play freeze tag</string>
+    <string name="pastime_name">Name</string>
+    <string name="pastime_name_description">Enter a unique name for this activity, such as \"cycling\" for riding a bicycle or \"kite\" for flying a kite</string>
+    <string name="pastime_name_example">tag</string>
+    <string name="pastime_edit_error">Cannot save activity because:</string>
+    <string name="pastime_edit_error_duplicate_name">Another activity has the same name</string>
+    <string name="pastime_edit_error_duplicate_action">Another activity has the same prompt</string>
+    <string name="pastime_edit_error_empty_name">Activity name cannot be empty</string>
+    <string name="pastime_edit_error_empty_action">Activity prompt cannot be empty</string>
 </resources>

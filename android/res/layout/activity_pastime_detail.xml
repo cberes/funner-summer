@@ -29,9 +29,7 @@
               android:text="@string/pastime_history"
               android:layout_marginBottom="@dimen/view_vertical_margin"
               android:layout_marginTop="@dimen/view_vertical_margin"
-              android:textAppearance="?android:attr/textAppearanceMedium"
-              android:textAllCaps="true"
-              android:textColor="#9C0"/>
+              android:textAppearance="@style/textAppearanceSectionHeader"/>
 
     <TextView android:id="@+id/pastime_history_loading"
               android:layout_width="wrap_content"
@@ -56,9 +54,7 @@
               android:text="@string/action_settings"
               android:layout_marginBottom="@dimen/view_vertical_margin"
               android:layout_marginTop="@dimen/view_vertical_margin"
-              android:textAppearance="?android:attr/textAppearanceMedium"
-              android:textAllCaps="true"
-              android:textColor="#9C0"/>
+              android:textAppearance="@style/textAppearanceSectionHeader"/>
 
     <ListView android:id="@+id/pastime_settings"
               android:layout_width="match_parent"

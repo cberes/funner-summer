@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/view_vertical_margin"
+              android:textAppearance="@style/textAppearanceSectionHeader"
+              android:ellipsize="none"
+              android:scrollHorizontally="false"
+              android:text="@string/pastime_prompt"
+              android:labelFor="@+id/text_pastime_prompt" />
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/view_vertical_margin"
+              android:ellipsize="none"
+              android:scrollHorizontally="false"
+              android:text="@string/pastime_prompt_description"/>
+
+    <EditText android:id="@+id/text_pastime_prompt"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/view_vertical_margin"
+              android:inputType="text"
+              android:ems="10"
+              android:maxLines="1"
+              android:imeOptions="actionNext"
+              android:hint="@string/pastime_prompt_example"
+              android:nextFocusDown="@+id/text_pastime_name" >
+              <requestFocus />
+    </EditText>
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/view_vertical_margin"
+              android:layout_marginTop="@dimen/view_vertical_margin"
+              android:textAppearance="@style/textAppearanceSectionHeader"
+              android:ellipsize="none"
+              android:scrollHorizontally="false"
+              android:text="@string/pastime_name"
+              android:labelFor="@+id/text_pastime_name"/>
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/view_vertical_margin"
+              android:ellipsize="none"
+              android:scrollHorizontally="false"
+              android:text="@string/pastime_name_description"/>
+
+    <EditText android:id="@+id/text_pastime_name"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="@dimen/view_vertical_margin"
+              android:inputType="text"
+              android:ems="10"
+              android:maxLines="1"
+              android:imeOptions="actionDone"
+              android:hint="@string/pastime_name_example"
+              android:nextFocusDown="@+id/button_pastime_save" >
+    </EditText>
+
+    <Button android:id="@+id/button_pastime_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/view_vertical_margin"
+            android:text="@string/pastime_create" />
+
+</LinearLayout>

@@ -110,6 +110,12 @@ public class RandomPastimes extends Activity implements ActionBar.TabListener
       mSectionsPagerAdapter.refreshFragments();
       return true;
     }
+    else if (id == R.id.action_pastime_create)
+    {
+      Intent intent = new Intent(this, PastimeEditor.class);
+      intent.putExtra(PastimeEditor.ARG_PARENT, RandomPastimes.class);
+      startActivity(intent);
+    }
     return super.onOptionsItemSelected(item);
   }
 

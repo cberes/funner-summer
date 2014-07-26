@@ -3,6 +3,13 @@
     tools:context="net.seabears.funner.summer.Ideas" >
 
     <item
+        android:id="@+id/action_pastime_create"
+        android:orderInCategory="50"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_new"
+        android:title="@string/action_pastime_create"/>
+
+    <item
         android:id="@+id/action_pastimes"
         android:orderInCategory="100"
         android:showAsAction="never"

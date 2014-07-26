@@ -24,6 +24,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -58,12 +59,15 @@ public class Pastime extends Activity
     SELECTION_METHODS = new HashMap<Class<?>, Long>(3);
     SELECTION_METHODS.put(Ideas.class, SelectionMethod.HISTORICAL.getId());
     SELECTION_METHODS.put(RandomPastimes.class, SelectionMethod.RANDOM.getId());
+    SELECTION_METHODS.put(PastimeEditor.class, SelectionMethod.MANUAL.getId());
     SELECTION_METHODS.put(Pastimes.class, SelectionMethod.MANUAL.getId());
     SELECTION_METHODS.put(History.class, SelectionMethod.MANUAL.getId());
     PARENTS = new HashSet<Class<?>>(SELECTION_METHODS.keySet());
   }
 
   private long id;
+
+  private boolean custom;
 
   private PastimeActionArgs pastimeArgs;
 
@@ -91,12 +95,13 @@ public class Pastime extends Activity
     // get pastime from database
     dbHelper = new FunnerDbHelper(this);
     Cursor cursor = dbHelper.getReadableDatabase()
-        .query("pastime", new String[] { "action_name", "active" },
+        .query("pastime", new String[] { "action_name", "active", "custom" },
             "_id = ?", new String[] { String.valueOf(id) },
             null, null, null);
     cursor.moveToFirst();
     final String action = cursor.getString(cursor.getColumnIndex("action_name"));
     final boolean active = cursor.getInt(cursor.getColumnIndex("active")) != 0;
+    custom = cursor.getInt(cursor.getColumnIndex("custom")) != 0;
 
     // pastime details
     setTitle(action);
@@ -193,6 +198,13 @@ public class Pastime extends Activity
   }
 
   @Override
+  public boolean onCreateOptionsMenu(Menu menu)
+  {
+    getMenuInflater().inflate(R.menu.pastime, menu);
+    return custom;
+  }
+
+  @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
     final int id = item.getItemId();
@@ -206,6 +218,13 @@ public class Pastime extends Activity
       //
       navigateUpTo(new Intent(this, parent));
       return true;
+    }
+    else if (id == R.id.action_pastime_edit && custom)
+    {
+      Intent intent = new Intent(this, PastimeEditor.class);
+      intent.putExtra(PastimeEditor.ARG_PASTIME_ID, this.id);
+      intent.putExtra(PastimeEditor.ARG_PARENT, Pastime.class);
+      startActivity(intent);
     }
     return super.onOptionsItemSelected(item);
   }
