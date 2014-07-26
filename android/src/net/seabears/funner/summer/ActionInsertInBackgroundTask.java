@@ -76,6 +76,12 @@ public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void
     super.onPostExecute(result);
     progressDialog.dismiss();
     Toast.makeText(activity, R.string.pastime_recorded, Toast.LENGTH_LONG).show();
-    activity.navigateUpTo(new Intent(activity, parent));
+    Intent intent = new Intent(activity, parent);
+    if (PastimeEditor.class.equals(parent))
+    {
+      intent.putExtra(PastimeEditor.ARG_PASTIME_ID, task.getPastimeId());
+      intent.putExtra(PastimeEditor.ARG_PARENT, activity.getClass());
+    }
+    activity.navigateUpTo(intent);
   }
 }
