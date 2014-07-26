@@ -216,7 +216,13 @@ public class Pastime extends Activity
       //
       // http://developer.android.com/design/patterns/navigation.html#up-vs-back
       //
-      navigateUpTo(new Intent(this, parent));
+      Intent intent = new Intent(this, parent);
+      if (PastimeEditor.class.equals(parent))
+      {
+        intent.putExtra(PastimeEditor.ARG_PASTIME_ID, this.id);
+        intent.putExtra(PastimeEditor.ARG_PARENT, Pastime.class);
+      }
+      navigateUpTo(intent);
       return true;
     }
     else if (id == R.id.action_pastime_edit && custom)

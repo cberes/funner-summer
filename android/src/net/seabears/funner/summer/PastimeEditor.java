@@ -191,7 +191,13 @@ public class PastimeEditor extends Activity
     final int id = item.getItemId();
     if (id == android.R.id.home)
     {
-      navigateUpTo(new Intent(this, parent));
+      Intent intent = new Intent(this, parent);
+      if (Pastime.class.equals(parent))
+      {
+        intent.putExtra(Pastime.ARG_PASTIME_ID, this.id);
+        intent.putExtra(Pastime.ARG_PARENT, PastimeEditor.class);
+      }
+      navigateUpTo(intent);
       return true;
     }
     return super.onOptionsItemSelected(item);
