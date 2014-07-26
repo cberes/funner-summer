@@ -71,7 +71,7 @@ public class PastimesFragment extends ProgressListFragment
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
   {
-    inflater.inflate(R.menu.pastime, menu);
+    inflater.inflate(R.menu.pastimes, menu);
     super.onCreateOptionsMenu(menu, inflater);
   }
 

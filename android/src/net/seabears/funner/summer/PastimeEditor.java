@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -163,10 +164,19 @@ public class PastimeEditor extends Activity
     }
 
     // insert pastime
+    final SQLiteDatabase db = dbHelper.getWritableDatabase();
+    final String table = "pastime";
     final ContentValues values = new ContentValues();
     values.put("name", name);
     values.put("action_name", action);
-    id = dbHelper.getWritableDatabase().insert("pastime", null, values);
+    if (id == 0)
+    {
+      id = db.insert(table, null, values);
+    }
+    else
+    {
+      db.update(table, values, "_id = ?", new String[] { String.valueOf(id) });
+    }
 
     // go to pastime activity
     Intent intent = new Intent(PastimeEditor.this, Pastime.class);
