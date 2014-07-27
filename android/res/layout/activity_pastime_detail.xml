@@ -60,9 +60,10 @@
               android:layout_marginTop="@dimen/view_vertical_margin"
               android:textAppearance="@style/textAppearanceSectionHeader"/>
 
-    <ListView android:id="@+id/pastime_settings"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"/>
+    <LinearLayout android:id="@+id/pastime_settings"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"/>
 
 </LinearLayout>
 

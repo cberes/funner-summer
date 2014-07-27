@@ -1,7 +1,6 @@
 package net.seabears.funner.summer;
 
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,13 +34,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckedTextView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -152,26 +149,22 @@ public class Pastime extends Activity
     getLoaderManager().initLoader(0, null, this);
 
     // settings
-    settings = Arrays.asList(getResources().getText(R.string.pastime_include).toString());
-
-    ListView settingsView = (ListView) findViewById(R.id.pastime_settings);
-    settingsView.setAdapter(new ArrayAdapter<String>(this,
-        android.R.layout.simple_list_item_multiple_choice,
-        android.R.id.text1,
-        settings));
-    settingsView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-    settingsView.setOnItemClickListener(new OnItemClickListener()
+    LinearLayout settingsView = (LinearLayout) findViewById(R.id.pastime_settings);
+    CheckBox setting = new CheckBox(this);
+    settingsView.addView(setting);
+    setting.setText(R.string.pastime_include);
+    setting.setChecked(active);
+    setting.setOnCheckedChangeListener(new OnCheckedChangeListener()
     {
       @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
       {
-        CheckedTextView item = (CheckedTextView) view;
-        ContentValues values = new ContentValues(1);
-        values.put("active", item.isChecked());
-        dbHelper.getWritableDatabase().update("pastime", values, "_id = ?", new String[] { String.valueOf(Pastime.this.id) });
+        final ContentValues values = new ContentValues(1);
+        values.put("active", isChecked);
+        dbHelper.getWritableDatabase().update("pastime", values,
+            "_id = ?", new String[] { String.valueOf(Pastime.this.id) });
       }
     });
-    settingsView.setItemChecked(0, active);
 
     // ok button
     Button button = (Button) findViewById(R.id.button_pastime_do);
@@ -284,7 +277,11 @@ public class Pastime extends Activity
   {
     final LinearLayout historyView = (LinearLayout) findViewById(R.id.pastime_history);
     final Resources resources = getResources();
+
+    // hide "loading" view
     ((TextView) findViewById(R.id.pastime_history_loading)).setVisibility(View.GONE);
+
+    // add data views
     mAdapter.swapCursor(data);
     final int count = data.getCount();
     for (int i = 0; i < count; ++i)
@@ -292,16 +289,11 @@ public class Pastime extends Activity
       historyView.addView(mAdapter.getView(i, null, historyView));
       if (i != count - 1)
       {
-        // add a divider
-        View divider = new View(this);
-        divider.setLayoutParams(new ViewGroup.LayoutParams(
-            LayoutParams.MATCH_PARENT,
-            (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, resources.getDisplayMetrics())
-            ));
-        divider.setBackgroundColor(Color.LTGRAY);
-        historyView.addView(divider);
+        historyView.addView(createDivider(resources));
       }
     }
+
+    // show "empty" view
     if (data.getCount() == 0)
     {
       ((TextView) findViewById(R.id.pastime_history_empty)).setVisibility(View.VISIBLE);
@@ -312,5 +304,16 @@ public class Pastime extends Activity
   public void onLoaderReset(Loader<Cursor> loader)
   {
     mAdapter.swapCursor(null);
+  }
+
+  private View createDivider(Resources resources)
+  {
+    View divider = new View(this);
+    divider.setLayoutParams(new ViewGroup.LayoutParams(
+        LayoutParams.MATCH_PARENT,
+        (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, resources.getDisplayMetrics())
+        ));
+    divider.setBackgroundColor(Color.LTGRAY);
+    return divider;
   }
 }
