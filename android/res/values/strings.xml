@@ -30,10 +30,10 @@
     <string name="pastime_create">Create</string>
     <string name="pastime_update">Update</string>
     <string name="pastime_prompt">Prompt</string>
-    <string name="pastime_prompt_description">Enter a prompt for this activity, such as \"Enjoy a bicycle ride\" or \"Fly a kite\"</string>
+    <string name="pastime_prompt_description">Enter a prompt for this activity, such as \"Enjoy a bicycle ride\" or \"Fly a kite.\"</string>
     <string name="pastime_prompt_example">Play freeze tag</string>
     <string name="pastime_name">Name</string>
-    <string name="pastime_name_description">Enter a unique name for this activity, such as \"cycling\" for riding a bicycle or \"kite\" for flying a kite</string>
+    <string name="pastime_name_description">Enter a unique name for this activity, such as \"cycling\" for riding a bicycle or \"kite\" for flying a kite. This is used to sort activities.</string>
     <string name="pastime_name_example">tag</string>
     <string name="pastime_edit_error">Cannot save activity because:</string>
     <string name="pastime_edit_error_duplicate_name">Another activity has the same name</string>

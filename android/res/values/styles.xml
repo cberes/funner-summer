@@ -23,6 +23,12 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <!-- Active list item style -->
+    <style name="textAppearanceActiveListItemSmall" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#000</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <!-- Inactive list item style -->
     <style name="textAppearanceInactiveListItemSmall" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">#AAA</item>

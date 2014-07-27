@@ -12,6 +12,8 @@ import net.seabears.funner.ContextualDateFormatter;
 import net.seabears.funner.db.ActionInsertTask;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.db.SelectionMethod;
+import net.seabears.funner.location.LocationErrorReceiver;
+import net.seabears.funner.location.LocationUtils;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
 import net.seabears.funner.weather.BlockingWeatherReceiver;
 import net.seabears.funner.weather.WeatherPullService;
@@ -20,19 +22,25 @@ import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -77,6 +85,19 @@ public class Pastime extends Activity
 
   private List<String> settings;
 
+  private boolean firstAttemptToGetWeather = true;
+
+  private final BlockingWeatherReceiver weatherReceiver = new BlockingWeatherReceiver();
+
+  private final LocationErrorReceiver errorReceiver = new LocationErrorReceiver()
+  {
+    @Override
+    protected Activity getActivity()
+    {
+      return Pastime.this;
+    }
+  };
+
   // This is the Adapter being used to display the list's data
   private SimpleCursorAdapter mAdapter;
 
@@ -109,8 +130,6 @@ public class Pastime extends Activity
     actionView.setText(action);
 
     // history
-    ListView historyView = (ListView) findViewById(R.id.pastime_history);
-    historyView.setChoiceMode(ListView.CHOICE_MODE_NONE);
     final ContextualDateFormatter formatter = new ContextualDateFormatter(this);
     mAdapter = new SimpleCursorAdapter(this,
         android.R.layout.simple_list_item_1, null,
@@ -130,7 +149,6 @@ public class Pastime extends Activity
         }
       }
     };
-    historyView.setAdapter(mAdapter);
     getLoaderManager().initLoader(0, null, this);
 
     // settings
@@ -166,9 +184,10 @@ public class Pastime extends Activity
         final long pastimeId = Pastime.this.id;
         final long selectionMethodId = SELECTION_METHODS.get(parent);
         final ActionInsertTask task = new ActionInsertTask(db, pastimeId, selectionMethodId);
-        final BlockingWeatherReceiver weatherReceiver = new BlockingWeatherReceiver();
         final ActionInsertInBackgroundTask backgroundTask = new ActionInsertInBackgroundTask(Pastime.this, parent, task, weatherReceiver);
-        WeatherPullService.observeWeather(Pastime.this, weatherReceiver);
+        final boolean localFirstAttemptToGetWeather = firstAttemptToGetWeather;
+        firstAttemptToGetWeather = false;
+        WeatherPullService.observeWeather(Pastime.this, weatherReceiver, errorReceiver, !localFirstAttemptToGetWeather);
 
         if (pastimeArgs == null)
         {
@@ -182,6 +201,18 @@ public class Pastime extends Activity
         }
       }
     });
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
+    if (requestCode == LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST)
+    {
+      // try to get the weather regardless of whether the error was resolved
+      final boolean ignoreErrors = true;
+      WeatherPullService.observeWeather(this, weatherReceiver, errorReceiver, ignoreErrors);
+    }
+    super.onActivityResult(requestCode, resultCode, data);
   }
 
   private void readArguments()
@@ -251,8 +282,26 @@ public class Pastime extends Activity
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor data)
   {
+    final LinearLayout historyView = (LinearLayout) findViewById(R.id.pastime_history);
+    final Resources resources = getResources();
     ((TextView) findViewById(R.id.pastime_history_loading)).setVisibility(View.GONE);
     mAdapter.swapCursor(data);
+    final int count = data.getCount();
+    for (int i = 0; i < count; ++i)
+    {
+      historyView.addView(mAdapter.getView(i, null, historyView));
+      if (i != count - 1)
+      {
+        // add a divider
+        View divider = new View(this);
+        divider.setLayoutParams(new ViewGroup.LayoutParams(
+            LayoutParams.MATCH_PARENT,
+            (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, resources.getDisplayMetrics())
+            ));
+        divider.setBackgroundColor(Color.LTGRAY);
+        historyView.addView(divider);
+      }
+    }
     if (data.getCount() == 0)
     {
       ((TextView) findViewById(R.id.pastime_history_empty)).setVisibility(View.VISIBLE);

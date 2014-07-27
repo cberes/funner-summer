@@ -7,12 +7,15 @@ import java.util.Set;
 
 import net.seabears.funner.Weather;
 import net.seabears.funner.db.FunnerDbHelper;
+import net.seabears.funner.location.LocationErrorReceiver;
+import net.seabears.funner.location.LocationUtils;
 import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
 import net.seabears.funner.weather.BlockOnWeatherSQLiteCursorLoader;
 import net.seabears.funner.weather.BlockingWeatherReceiver;
 import net.seabears.funner.weather.WeatherPullService;
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +53,17 @@ public class IdeasFragment extends ProgressListFragment
 
   private final BlockingWeatherReceiver weatherReceiver = new BlockingWeatherReceiver();
 
+  private boolean firstAttemptToGetWeather = true;
+
+  private final LocationErrorReceiver errorReceiver = new LocationErrorReceiver()
+  {
+    @Override
+    protected Activity getActivity()
+    {
+      return IdeasFragment.this.getActivity();
+    }
+  };
+
   @Override
   public void onActivityCreated(Bundle savedInstanceState)
   {
@@ -61,8 +75,6 @@ public class IdeasFragment extends ProgressListFragment
     {
       throw new IllegalStateException(getClass() + " " + ARG_PARENT + " argument " + parent + " is invalid.");
     }
-
-    WeatherPullService.observeWeather(getActivity(), weatherReceiver);
 
     // For the cursor adapter, specify which columns go into which views
     final String[] fromColumns = { "action" };
@@ -148,5 +160,26 @@ public class IdeasFragment extends ProgressListFragment
   public Date getLastRefreshed()
   {
     return lastRefreshed;
+  }
+
+  @Override
+  public void onStart()
+  {
+    super.onStart();
+    final boolean localFirstAttemptToGetWeather = firstAttemptToGetWeather;
+    firstAttemptToGetWeather = false;
+    WeatherPullService.observeWeather(getActivity(), weatherReceiver, errorReceiver, !localFirstAttemptToGetWeather);
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
+    if (requestCode == LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST)
+    {
+      // try to get the weather regardless of whether the error was resolved
+      final boolean ignoreErrors = true;
+      WeatherPullService.observeWeather(getActivity(), weatherReceiver, errorReceiver, ignoreErrors);
+    }
+    super.onActivityResult(requestCode, resultCode, data);
   }
 }

@@ -48,9 +48,11 @@ public class PastimesFragment extends ProgressListFragment
         // apply a different style to inactive items
         final View v = view.findViewById(toViews[0]);
         final boolean active = cursor.getInt(cursor.getColumnIndex(fromColumns[1])) != 0;
-        if (v instanceof TextView && !active)
+        if (v instanceof TextView)
         {
-          ((TextView) v).setTextAppearance(context, R.style.textAppearanceInactiveListItemSmall);
+          ((TextView) v).setTextAppearance(context,
+              active ? R.style.textAppearanceActiveListItemSmall
+                  : R.style.textAppearanceInactiveListItemSmall);
         }
       }
     };
