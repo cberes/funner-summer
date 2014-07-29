@@ -1,7 +1,6 @@
 package net.seabears.funner.weather;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class WeatherSummary implements Serializable
 {
@@ -9,18 +8,14 @@ public class WeatherSummary implements Serializable
 
   private String condition;
   private double temperature;
-  private GeographicCoordinate location;
-  private Date time;
 
   public WeatherSummary()
   {}
 
-  public WeatherSummary(String condition, double temperature, GeographicCoordinate location, Date time)
+  public WeatherSummary(String condition, double temperature)
   {
     this.condition = condition;
     this.temperature = temperature;
-    this.location = location;
-    this.time = time;
   }
 
   public static double kelvinsToFahrenheit(double kelvins)
@@ -46,25 +41,5 @@ public class WeatherSummary implements Serializable
   public void setTemperature(double temperature)
   {
     this.temperature = temperature;
-  }
-
-  public GeographicCoordinate getLocation()
-  {
-    return location;
-  }
-
-  public void setLocation(GeographicCoordinate location)
-  {
-    this.location = location;
-  }
-
-  public Date getTime()
-  {
-    return time;
-  }
-
-  public void setTime(Date time)
-  {
-    this.time = time;
   }
 }

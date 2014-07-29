@@ -2,6 +2,9 @@ package net.seabears.funner.weather.openweathermap;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Temperature implements Serializable
 {
   private static final long serialVersionUID = -151507311354380453L;

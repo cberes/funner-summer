@@ -1,4 +1,4 @@
-package net.seabears.funner;
+package net.seabears.funner.cache;
 
 import java.util.concurrent.TimeUnit;
 
