@@ -1,6 +1,6 @@
 package net.seabears.funner.cache;
 
-public interface ICache<K, V>
+public interface IRemoteCache<K, V>
 {
   CachedValue<V> read(K key);
 

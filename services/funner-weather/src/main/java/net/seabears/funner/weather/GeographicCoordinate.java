@@ -38,6 +38,11 @@ public class GeographicCoordinate implements Serializable
     this.longitude = longitude;
   }
 
+  public boolean isValid()
+  {
+    return Math.abs(latitude) <= 90.0 && Math.abs(longitude) <= 180.0;
+  }
+
   @Override
   public int hashCode()
   {

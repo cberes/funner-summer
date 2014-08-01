@@ -9,7 +9,7 @@ import net.seabears.funner.weather.openweathermap.Weather;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WeatherMapCache implements IWeatherCache
+public class WeatherMapCache implements IWeatherCacheRemote
 {
   private final Map<GeographicCoordinate, CachedValue<Weather>> CACHE = new ConcurrentHashMap<GeographicCoordinate, CachedValue<Weather>>();
 

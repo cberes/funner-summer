@@ -38,7 +38,7 @@ public class WeatherPullService extends IntentService implements
     GooglePlayServicesClient.ConnectionCallbacks,
     GooglePlayServicesClient.OnConnectionFailedListener
 {
-  private static final String WEATHER_URL = "http://ilium:8080/funner/api/weather/summary?lat=%f&lng=%f";
+  private static final String WEATHER_URL = "http://ilium:8080/weather/summary?lat=%f&lng=%f";
 
   private static final String PREF_KEY_WEATHER_CONDITION = "weather_condition";
 
