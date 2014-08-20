@@ -8,6 +8,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- "Optional. Used to check if an Internet connection is available prior to making an ad request." -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -64,6 +66,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name="com.google.android.gms.ads.AdActivity"
+             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
     </application>
 

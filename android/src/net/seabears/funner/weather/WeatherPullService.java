@@ -190,6 +190,13 @@ public class WeatherPullService extends IntentService implements
     LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
   }
 
+  private static void broadcastResult(Context context, Location result)
+  {
+    Intent localIntent = new Intent(RESULT_ACTION)
+        .putExtra(EXTENDED_DATA_RESULT, result);
+    LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
+  }
+
   private static void broadcastError(Context context, ConnectionResult result)
   {
     Intent localIntent = new Intent(ERROR_ACTION)
@@ -248,7 +255,9 @@ public class WeatherPullService extends IntentService implements
       try
       {
         mLocationClient.connect();
-        return locationTask.get(timeout, unit);
+        final Location location = locationTask.get(timeout, unit);
+        broadcastResult(this, location);
+        return location;
       } catch (InterruptedException | ExecutionException | TimeoutException e)
       {
         Log.e(getClass().getSimpleName(), e.getMessage(), e);
@@ -320,9 +329,18 @@ public class WeatherPullService extends IntentService implements
     @Override
     public void onReceive(Context context, Intent intent)
     {
-      final Weather weather = (Weather) intent.getSerializableExtra(EXTENDED_DATA_RESULT);
-      onReceiveWeather(context, weather);
+      final Object obj = intent.getSerializableExtra(EXTENDED_DATA_RESULT);
+      if (obj instanceof Location)
+      {
+        onReceiveLocation(context, (Location) obj);
+      }
+      else
+      {
+        onReceiveWeather(context, (Weather) obj);
+      }
     }
+
+    protected abstract void onReceiveLocation(Context context, Location location);
 
     protected abstract void onReceiveWeather(Context context, Weather weather);
   }
