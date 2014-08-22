@@ -21,12 +21,14 @@ public class BlockingWeatherReceiver extends WeatherReceiver
   @Override
   protected synchronized void onReceiveLocation(Context context, Location location)
   {
+    // Log.d(getClass().getSimpleName(), "b", new Exception());
     this.location = location;
   }
 
   @Override
   protected void onReceiveWeather(Context context, Weather weather)
   {
+    // Log.d(getClass().getSimpleName(), "a", new Exception());
     Log.i(getClass().getSimpleName(), "Received weather: " + weather);
     LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
     this.weather = weather;

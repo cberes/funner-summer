@@ -46,6 +46,10 @@ public class WeatherPullService extends IntentService implements
 
   private static final String PREF_KEY_WEATHER_EXPIRATION = "weather_expiration";
 
+  private static final String PREF_KEY_LOCATION_LATITUDE = "location_latitude";
+
+  private static final String PREF_KEY_LOCATION_LONGITUDE = "location_longitude";
+
   private static final String ARG_IGNORE_ERRORS = "ignore_errors";
 
   private final ExecutorService executor;
@@ -78,7 +82,12 @@ public class WeatherPullService extends IntentService implements
   /**
    * Defines the key for the status "extra" in an Intent
    */
-  public static final String EXTENDED_DATA_RESULT = WeatherPullService.class.getName() + ".RESULT";
+  public static final String EXTENDED_DATA_LOCATION = WeatherPullService.class.getName() + ".LOCATION";
+
+  /**
+   * Defines the key for the status "extra" in an Intent
+   */
+  public static final String EXTENDED_DATA_WEATHER = WeatherPullService.class.getName() + ".WEATHER";
 
   /**
    * Defines a custom Intent action
@@ -94,10 +103,12 @@ public class WeatherPullService extends IntentService implements
     LocalBroadcastManager.getInstance(activity).registerReceiver(weatherReceiver, new IntentFilter(RESULT_ACTION));
     LocalBroadcastManager.getInstance(activity).registerReceiver(errorReceiver, new IntentFilter(ERROR_ACTION));
 
+    Location location = readLocationFromPreferences(activity);
     Weather weather = readWeatherFromPreferences(activity);
     if (weather != null)
     {
       // weather was cached
+      broadcastResult(activity, location);
       broadcastResult(activity, weather);
     }
     else if (ignoreErors || LocationUtils.servicesConnected(activity, true))
@@ -136,11 +147,13 @@ public class WeatherPullService extends IntentService implements
         {
           // shorter cache time because the result was invalid
           weather = getDefaultWeather();
-          writeWeatherToPreferences(this, weather, 15, TimeUnit.MINUTES);
+          // TODO change to 15
+          writeWeatherToPreferences(this, weather, 1, TimeUnit.MINUTES);
         }
         else
         {
-          writeWeatherToPreferences(this, weather, 45, TimeUnit.MINUTES);
+          // TODO change to 45
+          writeWeatherToPreferences(this, weather, 1, TimeUnit.MINUTES);
         }
       }
     }
@@ -152,6 +165,21 @@ public class WeatherPullService extends IntentService implements
       broadcastResult(this, weather);
     }
     broadcastStatus(this, 100);
+  }
+
+  private static Location readLocationFromPreferences(Context context)
+  {
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    final float latitude = prefs.getFloat(PREF_KEY_LOCATION_LATITUDE, Float.NaN);
+    final float longitude = prefs.getFloat(PREF_KEY_LOCATION_LONGITUDE, Float.NaN);
+    if (latitude != Float.NaN && longitude != Float.NaN)
+    {
+      final Location location = new Location(WeatherPullService.class.getName());
+      location.setLatitude(latitude);
+      location.setLongitude(longitude);
+      return location;
+    }
+    return null;
   }
 
   private static Weather readWeatherFromPreferences(Context context)
@@ -176,6 +204,14 @@ public class WeatherPullService extends IntentService implements
         .commit();
   }
 
+  private static void writeLocationToPreferences(Context context, Location location)
+  {
+    PreferenceManager.getDefaultSharedPreferences(context).edit()
+        .putFloat(PREF_KEY_LOCATION_LATITUDE, (float) location.getLatitude())
+        .putFloat(PREF_KEY_LOCATION_LONGITUDE, (float) location.getLongitude())
+        .commit();
+  }
+
   private static void broadcastStatus(Context context, int status)
   {
     Intent localIntent = new Intent(BROADCAST_ACTION)
@@ -186,14 +222,14 @@ public class WeatherPullService extends IntentService implements
   private static void broadcastResult(Context context, Weather result)
   {
     Intent localIntent = new Intent(RESULT_ACTION)
-        .putExtra(EXTENDED_DATA_RESULT, result);
+        .putExtra(EXTENDED_DATA_WEATHER, result);
     LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
   }
 
   private static void broadcastResult(Context context, Location result)
   {
     Intent localIntent = new Intent(RESULT_ACTION)
-        .putExtra(EXTENDED_DATA_RESULT, result);
+        .putExtra(EXTENDED_DATA_LOCATION, result);
     LocalBroadcastManager.getInstance(context).sendBroadcast(localIntent);
   }
 
@@ -256,6 +292,7 @@ public class WeatherPullService extends IntentService implements
       {
         mLocationClient.connect();
         final Location location = locationTask.get(timeout, unit);
+        writeLocationToPreferences(this, location);
         broadcastResult(this, location);
         return location;
       } catch (InterruptedException | ExecutionException | TimeoutException e)
@@ -329,14 +366,15 @@ public class WeatherPullService extends IntentService implements
     @Override
     public void onReceive(Context context, Intent intent)
     {
-      final Object obj = intent.getSerializableExtra(EXTENDED_DATA_RESULT);
-      if (obj instanceof Location)
+      final Object location = intent.getParcelableExtra(EXTENDED_DATA_LOCATION);
+      final Object weather = intent.getSerializableExtra(EXTENDED_DATA_WEATHER);
+      if (location != null)
       {
-        onReceiveLocation(context, (Location) obj);
+        onReceiveLocation(context, (Location) location);
       }
-      else
+      if (weather != null)
       {
-        onReceiveWeather(context, (Weather) obj);
+        onReceiveWeather(context, (Weather) weather);
       }
     }
 

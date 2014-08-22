@@ -137,7 +137,8 @@ public class IdeasFragment extends ProgressListFragment
     return new BlockOnWeatherSQLiteCursorLoader(
         context,
         new FunnerDbHelper(context),
-        Ideas.class.equals(parent) ? SuggestionSqlQueryFactory.query(context)
+        Ideas.class.equals(parent)
+            ? SuggestionSqlQueryFactory.query(context)
             : RandomSqlQueryFactory.query(context),
         weatherReceiver)
     {
@@ -146,7 +147,8 @@ public class IdeasFragment extends ProgressListFragment
       {
         suggestArgs = new SuggestArgs(suggestArgs.getCount(),
             suggestArgs.getCrowd(), (int) weather.getTemperature(), weather.getCondition());
-        return Ideas.class.equals(parent) ? SuggestionSqlQueryFactory.args(suggestArgs)
+        return Ideas.class.equals(parent)
+            ? SuggestionSqlQueryFactory.args(suggestArgs)
             : RandomSqlQueryFactory.args(suggestArgs);
       }
     };
