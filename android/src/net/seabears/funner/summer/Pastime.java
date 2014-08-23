@@ -3,7 +3,6 @@ package net.seabears.funner.summer;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,8 +78,6 @@ public class Pastime extends Activity
   private Class<?> parent;
 
   private FunnerDbHelper dbHelper;
-
-  private List<String> settings;
 
   private boolean firstAttemptToGetWeather = true;
 

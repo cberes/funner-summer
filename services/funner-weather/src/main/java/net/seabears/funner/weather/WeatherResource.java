@@ -38,13 +38,19 @@ public class WeatherResource
   @Autowired
   private IWeatherCacheLocal localCache;
 
-  @Autowired(required = false)
+  /*
+   * @Autowired(required = false) will not work as expected
+   */
+  // @Autowired
   private IWeatherCacheRemote remoteCache;
 
   private List<IWeatherReadCommand> weatherCommands;
 
+  /*
+   * WE CANNOT USE @Autowired SETTERS :( Must use @Autowired constructor
+   */
   @Autowired
-  private void setWeatherCommands(Collection<IWeatherReadCommand> commands)
+  public WeatherResource(Collection<IWeatherReadCommand> commands)
   {
     this.weatherCommands = new ArrayList<IWeatherReadCommand>(commands);
     Collections.sort(this.weatherCommands, SORT_BY_PRIORITY);

@@ -27,7 +27,7 @@ public final class RandomSqlQueryFactory
     {
       while ((readLine = br.readLine()) != null)
       {
-        sqlQueryBuilder.append(readLine).append(System.lineSeparator());
+        sqlQueryBuilder.append(readLine).append(System.getProperty("line.separator"));
       }
     } catch (IOException e)
     {

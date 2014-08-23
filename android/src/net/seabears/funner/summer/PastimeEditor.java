@@ -32,7 +32,7 @@ public class PastimeEditor extends Activity
 
   static
   {
-    PARENTS = new HashSet<Class<?>>(Arrays.asList(Pastime.class, Pastimes.class, Ideas.class, RandomPastimes.class));
+    PARENTS = new HashSet<Class<?>>(Arrays.<Class<?>> asList(Pastime.class, Pastimes.class, Ideas.class, RandomPastimes.class));
   }
 
   private long id;

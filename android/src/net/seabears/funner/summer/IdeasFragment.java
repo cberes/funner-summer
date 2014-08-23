@@ -45,7 +45,7 @@ public class IdeasFragment extends ProgressListFragment
    */
   public static final String ARG_SECTION_NUMBER = "section_number";
 
-  private static final Set<Class<?>> PARENTS = new HashSet<Class<?>>(Arrays.asList(Ideas.class, RandomPastimes.class));
+  private static final Set<Class<?>> PARENTS = new HashSet<Class<?>>(Arrays.<Class<?>> asList(Ideas.class, RandomPastimes.class));
 
   /* Your ad unit id. Replace with your actual ad unit id. */
   private static final String AD_UNIT_ID = "ca-app-pub-3190866209318496/8163233208";

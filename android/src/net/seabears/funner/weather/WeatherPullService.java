@@ -141,10 +141,10 @@ public class WeatherPullService extends IntentService implements
       Location location = findLocationWithFallback(getDefaultLocation(), 10, TimeUnit.SECONDS);
       if (!locationError)
       {
-        Log.i(getClass().getSimpleName(), "Got location: " + location);
+        Log.d(getClass().getSimpleName(), "Got location without error");
         broadcastStatus(this, 50);
         weather = findWeatherWithFallback(location, null, 10, TimeUnit.SECONDS);
-        Log.i(getClass().getSimpleName(), "Got weather: " + weather);
+        Log.d(getClass().getSimpleName(), weather != null ? "Got weather without error" : "Got default weather");
         broadcastStatus(this, 99);
         if (weather == null)
         {
@@ -293,10 +293,17 @@ public class WeatherPullService extends IntentService implements
       {
         mLocationClient.connect();
         final Location location = locationTask.get(timeout, unit);
+        Log.d(getClass().getSimpleName(), location != null ? "Found location" : "Could not find location");
         writeLocationToPreferences(this, location);
         broadcastResult(this, location);
         return location;
-      } catch (InterruptedException | ExecutionException | TimeoutException e)
+      } catch (InterruptedException e)
+      {
+        Log.e(getClass().getSimpleName(), e.getMessage(), e);
+      } catch (ExecutionException e)
+      {
+        Log.e(getClass().getSimpleName(), e.getMessage(), e);
+      } catch (TimeoutException e)
       {
         Log.e(getClass().getSimpleName(), e.getMessage(), e);
       } finally
@@ -304,6 +311,7 @@ public class WeatherPullService extends IntentService implements
         mLocationClient.disconnect();
       }
     }
+    Log.d(getClass().getSimpleName(), "Using fallback location for weather");
     return fallback;
   }
 

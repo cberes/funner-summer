@@ -19,7 +19,6 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.google.common.base.Preconditions;
 
@@ -185,9 +184,9 @@ public class CsvDataImporter
     // get each datum
     String name = (String) data.get(DataColumn.NAME);
     String action = (String) data.get(DataColumn.ACTION);
-    boolean single = (boolean) data.get(DataColumn.SINGLE);
-    boolean couple = (boolean) data.get(DataColumn.COUPLE);
-    boolean group = (boolean) data.get(DataColumn.GROUP);
+    boolean single = (Boolean) data.get(DataColumn.SINGLE);
+    boolean couple = (Boolean) data.get(DataColumn.COUPLE);
+    boolean group = (Boolean) data.get(DataColumn.GROUP);
     final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     List<Date> times = convert((String[]) data.get(DataColumn.TIMES), new RawDataConverter<Date>()
     {
@@ -295,7 +294,6 @@ public class CsvDataImporter
 
   private long insert(String table, ContentValues values)
   {
-    Log.d(getClass().getSimpleName(), "Inserting into table " + table + ": " + values);
     return db.insert(table, null, values);
   }
 }

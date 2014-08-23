@@ -37,7 +37,7 @@ public class ErrorReasonsDialogFragment extends DialogFragment
     StringBuilder message = new StringBuilder(getText(resourceIds.get(0)));
     for (int resourceId : resourceIds.subList(1, resourceIds.size()))
     {
-      message.append(System.lineSeparator()).append(getText(resourceId));
+      message.append(System.getProperty("line.separator")).append(getText(resourceId));
     }
     return message.toString();
   }

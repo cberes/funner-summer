@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.seabears.funner.summer"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.0.1" >
 
-    <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="21"/>
+    <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="21"/>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>

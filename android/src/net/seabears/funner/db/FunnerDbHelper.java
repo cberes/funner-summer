@@ -44,7 +44,7 @@ public class FunnerDbHelper extends SQLiteOpenHelper
         }
         else
         {
-          sqlQueryBuilder.append(readLine).append(System.lineSeparator());
+          sqlQueryBuilder.append(readLine).append(System.getProperty("line.separator"));
         }
       }
       addSqlQueryString(sqlQueryBuilder.toString());
@@ -62,27 +62,37 @@ public class FunnerDbHelper extends SQLiteOpenHelper
     }
   }
 
+  @Override
   public void onCreate(SQLiteDatabase db)
   {
+    Log.i(getClass().getSimpleName(), "Creating databases....");
     for (String sqlQuery : sqlQueries)
     {
       db.execSQL(sqlQuery);
     }
+    Log.i(getClass().getSimpleName(), "Finished creating databases.");
 
     try
     {
+      Log.i(getClass().getSimpleName(), "Importing data....");
       new CsvDataImporter(context, db, R.raw.data).importData();
-    } catch (IOException | ParseException e)
+      Log.i(getClass().getSimpleName(), "Finished importing data.");
+    } catch (IOException e)
+    {
+      Log.e(getClass().getSimpleName(), e.getMessage(), e);
+    } catch (ParseException e)
     {
       Log.e(getClass().getSimpleName(), e.getMessage(), e);
     }
   }
 
+  @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
   {
     // nothing
   }
 
+  @Override
   public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion)
   {
     onUpgrade(db, oldVersion, newVersion);
