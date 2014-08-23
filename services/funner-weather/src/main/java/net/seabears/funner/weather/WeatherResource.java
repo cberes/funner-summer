@@ -38,7 +38,7 @@ public class WeatherResource
   @Autowired
   private IWeatherCacheLocal localCache;
 
-  @Autowired
+  @Autowired(required = false)
   private IWeatherCacheRemote remoteCache;
 
   private List<IWeatherReadCommand> weatherCommands;
@@ -58,7 +58,7 @@ public class WeatherResource
    */
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("summary")
+  @Path("all")
   public Weather getWeather(@QueryParam("lat") double latitude, @QueryParam("lng") double longitude)
   {
     final GeographicCoordinate location = new GeographicCoordinate(round(latitude), round(longitude));
@@ -78,8 +78,11 @@ public class WeatherResource
         if (command.cacheValue())
         {
           localCache.write(location, value);
-          new WriteWeatherToRemoteCacheCommand(remoteCache, location,
-              new CachedValue<Weather>(value, 1, TimeUnit.HOURS)).queue();
+          if (remoteCache != null)
+          {
+            new WriteWeatherToRemoteCacheCommand(remoteCache, location,
+                new CachedValue<Weather>(value, 1, TimeUnit.HOURS)).queue();
+          }
         }
         break;
       }
@@ -107,7 +110,7 @@ public class WeatherResource
    */
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("all")
+  @Path("summary")
   public WeatherSummary getWeatherSummary(@QueryParam("lat") double latitude, @QueryParam("lng") double longitude)
   {
     final Weather weather = getWeather(latitude, longitude);

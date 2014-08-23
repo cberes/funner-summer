@@ -38,7 +38,7 @@ public class WeatherPullService extends IntentService implements
     GooglePlayServicesClient.ConnectionCallbacks,
     GooglePlayServicesClient.OnConnectionFailedListener
 {
-  private static final String WEATHER_URL = "http://ilium:8080/weather/summary?lat=%f&lng=%f";
+  private static final String WEATHER_URL = "http://api.seabears.net:8080/weather/summary?lat=%f&lng=%f";
 
   private static final String PREF_KEY_WEATHER_CONDITION = "weather_condition";
 
@@ -108,7 +108,10 @@ public class WeatherPullService extends IntentService implements
     if (weather != null)
     {
       // weather was cached
-      broadcastResult(activity, location);
+      if (location != null)
+      {
+        broadcastResult(activity, location);
+      }
       broadcastResult(activity, weather);
     }
     else if (ignoreErors || LocationUtils.servicesConnected(activity, true))
@@ -147,13 +150,11 @@ public class WeatherPullService extends IntentService implements
         {
           // shorter cache time because the result was invalid
           weather = getDefaultWeather();
-          // TODO change to 15
-          writeWeatherToPreferences(this, weather, 1, TimeUnit.MINUTES);
+          writeWeatherToPreferences(this, weather, 15, TimeUnit.MINUTES);
         }
         else
         {
-          // TODO change to 45
-          writeWeatherToPreferences(this, weather, 1, TimeUnit.MINUTES);
+          writeWeatherToPreferences(this, weather, 45, TimeUnit.MINUTES);
         }
       }
     }
