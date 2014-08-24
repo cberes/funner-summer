@@ -4,7 +4,6 @@ import net.seabears.funner.cache.IWeatherCacheLocal;
 import net.seabears.funner.weather.GeographicCoordinate;
 import net.seabears.funner.weather.openweathermap.Weather;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -12,23 +11,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReadWeatherFromLocalCacheCommand implements IWeatherReadCommand
 {
-  private static final int PRIORITY = 100;
-
   private GeographicCoordinate key;
   private boolean valid;
-
-  @Autowired
   private IWeatherCacheLocal cache;
 
-  public ReadWeatherFromLocalCacheCommand()
+  public ReadWeatherFromLocalCacheCommand(IWeatherCacheLocal cache)
   {
-    valid = false;
-  }
-
-  @Override
-  public int getPriority()
-  {
-    return PRIORITY;
+    this.cache = cache;
+    this.valid = false;
   }
 
   @Override

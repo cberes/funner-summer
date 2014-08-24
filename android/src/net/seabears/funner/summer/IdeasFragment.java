@@ -9,6 +9,7 @@ import net.seabears.funner.Weather;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.location.LocationErrorReceiver;
 import net.seabears.funner.location.LocationUtils;
+import net.seabears.funner.summer.license.License;
 import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
@@ -102,29 +103,32 @@ public class IdeasFragment extends ProgressListFragment
     // or start a new one.
     getLoaderManager().initLoader(0, getArguments(), this);
 
-    // Create an ad.
-    adView = new AdView(getActivity());
-    adView.setAdSize(AdSize.BANNER);
-    adView.setAdUnitId(AD_UNIT_ID);
-
-    // Add the AdView to the view hierarchy. The view will have no size
-    // until the ad is loaded.
-    getListView().addHeaderView(adView);
-
-    // Create an ad request. Check logcat output for the hashed device ID to
-    // get test ads on a physical device.
-    final AdRequest.Builder builder = new AdRequest.Builder()
-        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-        .addTestDevice("B07B09DBA65355FD3B655A02BC1732A2");
-    Location location = weatherReceiver.getLocation();
-    if (location != null)
+    if (License.getInstance().isAdsEnabled())
     {
-      builder.setLocation(location);
-    }
-    final AdRequest adRequest = builder.build();
+      // Create an ad.
+      adView = new AdView(getActivity());
+      adView.setAdSize(AdSize.BANNER);
+      adView.setAdUnitId(AD_UNIT_ID);
 
-    // Start loading the ad in the background.
-    adView.loadAd(adRequest);
+      // Add the AdView to the view hierarchy. The view will have no size
+      // until the ad is loaded.
+      getListView().addHeaderView(adView);
+
+      // Create an ad request. Check logcat output for the hashed device ID to
+      // get test ads on a physical device.
+      final AdRequest.Builder builder = new AdRequest.Builder()
+          .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+          .addTestDevice("B07B09DBA65355FD3B655A02BC1732A2");
+      Location location = weatherReceiver.getLocation();
+      if (location != null)
+      {
+        builder.setLocation(location);
+      }
+      final AdRequest adRequest = builder.build();
+
+      // Start loading the ad in the background.
+      adView.loadAd(adRequest);
+    }
   }
 
   // Called when a new Loader needs to be created

@@ -173,13 +173,10 @@
                 </executions>
                 <configuration>
                     <group>Development/Libraries</group>
-                    <requires>
-                        <require>jetty9</require>
-                    </requires>
                     <mappings>
                         <mapping>
                             <directory>/opt/${project.name}/${project.version}/war</directory>
-                            <filemode>664</filemode>
+                            <filemode>775</filemode>
                             <username>root</username>
                             <groupname>root</groupname>
                             <sources>

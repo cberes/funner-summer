@@ -5,8 +5,6 @@ import net.seabears.funner.weather.openweathermap.Weather;
 
 public interface IWeatherReadCommand
 {
-  int getPriority();
-
   void setKey(GeographicCoordinate key);
 
   void setDefault(Weather value);

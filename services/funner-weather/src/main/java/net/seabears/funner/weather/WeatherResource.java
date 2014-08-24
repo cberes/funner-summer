@@ -1,9 +1,6 @@
 package net.seabears.funner.weather;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -17,7 +14,8 @@ import net.seabears.funner.cache.CachedValue;
 import net.seabears.funner.cache.IWeatherCacheLocal;
 import net.seabears.funner.cache.IWeatherCacheRemote;
 import net.seabears.funner.weather.commands.IWeatherReadCommand;
-import net.seabears.funner.weather.commands.WeatherReadCommandComparator;
+import net.seabears.funner.weather.commands.ReadWeatherFromLocalCacheCommand;
+import net.seabears.funner.weather.commands.ReadWeatherFromServiceCommand;
 import net.seabears.funner.weather.commands.WriteWeatherToRemoteCacheCommand;
 import net.seabears.funner.weather.openweathermap.IWeatherClient;
 import net.seabears.funner.weather.openweathermap.Weather;
@@ -30,31 +28,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Path("/")
 public class WeatherResource
 {
-  private static final Comparator<IWeatherReadCommand> SORT_BY_PRIORITY = new WeatherReadCommandComparator();
-
   @Autowired
   private IWeatherClient client;
 
   @Autowired
   private IWeatherCacheLocal localCache;
 
-  /*
-   * @Autowired(required = false) will not work as expected
-   */
   // @Autowired
   private IWeatherCacheRemote remoteCache;
 
-  private List<IWeatherReadCommand> weatherCommands;
-
   /*
-   * WE CANNOT USE @Autowired SETTERS :( Must use @Autowired constructor
+   * We cannot use @Autowired setters. We cannot use request-scoped beans. We
+   * cannot use @Autowired(required = false).
    */
-  @Autowired
-  public WeatherResource(Collection<IWeatherReadCommand> commands)
-  {
-    this.weatherCommands = new ArrayList<IWeatherReadCommand>(commands);
-    Collections.sort(this.weatherCommands, SORT_BY_PRIORITY);
-  }
 
   /**
    * Method handling HTTP GET requests. The returned object will be sent to the
@@ -74,7 +60,11 @@ public class WeatherResource
     }
 
     Weather value = null;
-    for (IWeatherReadCommand command : weatherCommands)
+    final List<IWeatherReadCommand> readCommands = Arrays.asList(
+        new ReadWeatherFromLocalCacheCommand(localCache),
+        // new ReadWeatherFromRemoteCacheCommand(remoteCache),
+        new ReadWeatherFromServiceCommand(client));
+    for (IWeatherReadCommand command : readCommands)
     {
       command.setKey(location);
       command.setDefault(value);

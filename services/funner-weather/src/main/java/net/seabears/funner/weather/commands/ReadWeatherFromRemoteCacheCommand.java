@@ -5,7 +5,6 @@ import net.seabears.funner.cache.IWeatherCacheRemote;
 import net.seabears.funner.weather.GeographicCoordinate;
 import net.seabears.funner.weather.openweathermap.Weather;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -16,25 +15,16 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 @Component
 public class ReadWeatherFromRemoteCacheCommand extends HystrixCommand<Weather> implements IWeatherReadCommand
 {
-  private static final int PRIORITY = 500;
-
   private GeographicCoordinate key;
   private boolean valid;
   private Weather defaultValue;
-
-  @Autowired
   private IWeatherCacheRemote cache;
 
-  public ReadWeatherFromRemoteCacheCommand()
+  public ReadWeatherFromRemoteCacheCommand(IWeatherCacheRemote cache)
   {
     super(HystrixCommandGroupKey.Factory.asKey(ReadWeatherFromRemoteCacheCommand.class.getSimpleName()));
-    valid = false;
-  }
-
-  @Override
-  public int getPriority()
-  {
-    return PRIORITY;
+    this.cache = cache;
+    this.valid = false;
   }
 
   @Override
