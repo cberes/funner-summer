@@ -97,13 +97,11 @@ public class IdeasFragment extends ProgressListFragment
     mAdapter = new SimpleCursorAdapter(getActivity(),
         android.R.layout.simple_list_item_1, null,
         fromColumns, toViews, 0);
-    setListAdapter(mAdapter);
 
-    // Prepare the loader. Either re-connect with an existing one,
-    // or start a new one.
-    getLoaderManager().initLoader(0, getArguments(), this);
-
-    if (License.getInstance().isAdsEnabled())
+    // we must add the ad view to the header before calling setListAdapter
+    // (older Android versions require it)
+    final boolean showAds = License.getInstance().isAdsEnabled();
+    if (showAds)
     {
       // Create an ad.
       adView = new AdView(getActivity());
@@ -113,7 +111,18 @@ public class IdeasFragment extends ProgressListFragment
       // Add the AdView to the view hierarchy. The view will have no size
       // until the ad is loaded.
       getListView().addHeaderView(adView);
+    }
 
+    // set list adapter for suggestions after adding ad view
+    setListAdapter(mAdapter);
+
+    // Prepare the loader. Either re-connect with an existing one,
+    // or start a new one.
+    getLoaderManager().initLoader(0, getArguments(), this);
+
+    // create ad request
+    if (showAds)
+    {
       // Create an ad request. Check logcat output for the hashed device ID to
       // get test ads on a physical device.
       final AdRequest.Builder builder = new AdRequest.Builder()
