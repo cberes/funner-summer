@@ -1,0 +1,106 @@
+name,action,aliases,times,single,couple,group,temps,weather (clear clouds drizzle rain snow thunderstorm atmosphere extreme)
+running,Go running,jogging,8:00 14:00 20:00,1,1,0,60 80,clear clouds
+walking,Take a walk,,8:00 14:00 20:00,1,1,0,60 80,clear clouds
+hiking,Take a hike,,10:00 16:00,1,1,0,60 80,clear clouds
+cycling,Enjoy a bike ride,,10:00 16:00,1,1,0,60 80,clear clouds
+mountain biking,Go mountain biking,,10:00 16:00,1,1,0,60 80,clear clouds
+orienteering,Go orienteering,,10:00 16:00,1,1,0,60 80,clear clouds
+catch,Play catch,,10:00 16:00,0,1,0,55 75 95,clear clouds
+swimming,Go swimming,,8:00 14:00 20:00,1,1,0,60 80 100 120,clear clouds
+beach,Go to a beach,,10:00 16:00,1,1,1,60 80 100 120,clear clouds
+park,Go to a park,,10:00 16:00,1,1,1,55 75 95 115,clear clouds
+picnic,Go on a picnic,,10:00 16:00,1,1,1,60 80 100 120,clear clouds
+painting,Paint a picture,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+reading,Read a book,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+letter,Write a letter to a friend,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+pet,Volunteer at a pet shelter,dogs; cats,10:00 16:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+soup,Volunteer at a soup kitchen,,10:00 16:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+elderly,Read to elderly people,,10:00 16:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+zoo,Visit a zoo,,10:00 16:00,1,1,1,60 80 100 120,clear clouds
+golfing,Play a round of golf,,10:00 16:00,1,1,1,60 80,clear clouds
+disc golfing,Play a round of disc golf,,10:00 16:00,1,1,1,60 80,clear clouds
+mini golf,Play a round of miniature golf,,10:00 16:00,1,1,1,60 80,clear clouds
+tennis,Play tennis,,10:00 16:00,0,1,0,60 80,clear clouds
+badminton,Play badminton,,10:00 16:00,0,1,0,60 80,clear clouds
+volleyball,Play volleyball,,10:00 16:00,0,1,1,60 80,clear clouds
+movie,Watch a movie,film,0:00 6:00 12:00 18:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+drive-in,Catch a movie at a drive-in,,21:00,1,1,1,55 75 95 115,clear clouds drizzle rain
+softball,Join a softball league,baseball,10:00 16:00,1,0,0,60 80,clear clouds
+driving,Enjoy a road trip,,0:00 6:00 12:00 18:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain thunderstorm
+skateboarding,Go skateboarding,,10:00 16:00,1,1,1,55 75 95,clear clouds
+roller skating,Go roller skating,,10:00 16:00,1,1,1,55 75 95,clear clouds
+surfing,Go surfing,,10:00 16:00,1,1,1,60 80 100 120,clear clouds
+tubing,Go tubing on a river,,10:00 16:00,1,1,1,60 80 100 120,clear clouds
+ice skating,Go ice skating,,8:00 14:00 20:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+snowboarding,Go snowboarding,,8:00 14:00 20:00,1,1,1,10 30,clear clouds snow
+snow tubing,Go snow tubing,,8:00 14:00 20:00,1,1,1,10 30,clear clouds snow
+skiing,Go skiing,,8:00 14:00 20:00,1,1,1,10 30,clear clouds snow
+skydiving,Try skydiving,,10:00 16:00,1,1,1,60 80 100,clear clouds
+ballooning,Enjoy a hot-air balloon ride,,10:00 16:00,1,1,1,60 80 100,clear clouds
+bungee jumping,Try bungee jumping,,10:00 16:00,1,1,1,60 80 100,clear clouds
+zip lining,Try zip lining,,10:00 16:00,1,1,1,60 80 100,clear clouds
+kayaking,Enjoy a kayak ride,canoeing,8:00 14:00 20:00,1,1,1,60 80 100 120,clear clouds
+fishing,Go fishing,,8:00 14:00 20:00,1,1,1,55 75 95 115,clear clouds
+carnival,Visit a fair or carnival,,8:00 14:00 20:00,1,1,1,55 75 95 115,clear clouds
+arboretum,Visit an arboretum,,10:00 16:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+gardening,Plant a garden,,8:00 14:00,1,1,0,55 75 95 115,clear clouds
+flowers,Pick some wildflowers,,10:00 16:00,1,1,0,60 80 100 120,clear clouds
+coffee,Go to a coffee shop,cafe,8:00 14:00 20:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+class,Take an art class,,10:00 16:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+art,Visit an art museum,,10:00 16:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+history,Visit a history museum,,10:00 16:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+campfire,Have a campfire,bonfire,18:00 0:00,0,1,1,50 70 90 110,clear clouds
+barbecue,Host a barbecue,,10:00 16:00,0,1,1,60 80 100,clear clouds
+tent,Sleep under the stars,,0:00,1,1,1,60 80 100 120,clear
+bubbles,Blow bubbles,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+laser tag,Play laser tag,,14:00 20:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+playground,Take your kids to a playground,,10:00 16:00,1,1,0,60 80 100 120,clear clouds
+water balloons,Have a water ballon battle,,10:00 16:00,1,1,1,60 80 100 120,clear clouds
+concert,Take in an outdoor concert,,19:00,1,1,1,60 80 100 120,clear clouds
+croquet,Play croquet,,10:00 16:00,0,1,1,60 80 100 120,clear clouds
+bocce,Play bocce,,10:00 16:00,0,1,1,60 80 100 120,clear clouds
+horseshoes,Play horseshoes,,10:00 16:00,0,1,1,60 80 100 120,clear clouds
+darts,Play darts,,14:00 20:00,0,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+billiards,Play a game of billiards,,14:00 20:00,0,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+ice skating outside,Skate at an outdoor ice rink,,8:00 14:00 20:00,1,1,1,10 30,clear clouds snow
+skiing cross country,Go cross-country skiing,,8:00 14:00 20:00,1,1,1,10 30,clear clouds snow
+star,Go stargazing,,0:00,1,1,1,50 70 90 110,clear
+bowling,Go bowling,,14:00 20:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+kite,Fly a kite,,10:00 16:00,1,1,0,60 80 100 120,clear clouds
+board game,Play a board game,,0:00 6:00 12:00 18:00,0,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+card game,Play a card game,,0:00 6:00 12:00 18:00,0,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+yoga,Try yoga,,0:00 6:00 12:00 18:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+meditation,Try meditation,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+knit,Knit something,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+candlemaking,Make a candle,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+bird,Go bird watching,,8:00 14:00,1,1,1,60 80 100 120,clear clouds
+sledding,Sled down a hill,,10:00 16:00,1,1,1,10 30,clear clouds snow
+carpentry,Build a birdhouse,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+wine,Go wine tasting,,10:00 16:00,1,1,1,60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+shooting,Go shooting at a range,,10:00 16:00,1,1,1,55 75 95,clear clouds
+architecture,Take a tour of an old building,,10:00 16:00,1,1,1,55 75 95 115,clear clouds drizzle
+rocket,Build and launch a model rocket,,0:00 6:00 12:00 18:00,1,0,0,55 75 95 115,clear clouds
+rock climbing,Try indoor rock climbing,,10:00 16:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+cook,Cook an exotic dish,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+wildlife,Spend time at a nature preserve,,10:00 16:00,1,1,1,60 80 100 120,clear clouds
+musical instrument,Learn to play a musical instrument,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+poem,Write a poem,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+app,Learn to make an app,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+drawing,Draw a picture,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+bookstore,Browse a book store,,10:00 16:00,1,1,1,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+flea,Visit a flea market,,8:00 14:00,1,1,1,60 80 100 120,clear clouds
+market,Go to a farmers' market,,8:00 14:00,1,1,1,60 80 100 120,clear clouds
+horse,Take a horseback riding lesson,,10:00 16:00,1,1,0,60 80 100 120,clear clouds
+archery,Give archery a shot,,10:00 16:00,1,1,1,55 75 95,clear clouds
+zen,Make a zen garden,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+model,Build a model,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+origami,Fold origami,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+comic,Draw a comic,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+magic,Learn a magic trick,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+bracelet,Make a bracelet,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+scrapbook,Make a scrapbook,,0:00 6:00 12:00 18:00,1,0,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+bake,Bake a sweet treat,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere extreme
+strength,Do strength training,,0:00 6:00 12:00 18:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere
+play,Enjoy outdoor theater,,18:00,1,1,1,60 80 100 120,clear clouds
+boat,Enjoy a boat ride,,10:00 16:00,1,1,1,60 80 100 120,clear clouds
+improv,Take an improv class,,10:00 16:00,1,1,0,-20 0 20 40 60 80 100 120,clear clouds drizzle rain snow thunderstorm atmosphere

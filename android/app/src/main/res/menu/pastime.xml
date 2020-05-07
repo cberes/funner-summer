@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.seabears.funner.summer.RandomPastimes" >
+
+    <item
+        android:id="@+id/action_pastime_edit"
+        android:orderInCategory="50"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_edit"
+        android:title="@string/action_pastime_edit"/>
+
+</menu>
