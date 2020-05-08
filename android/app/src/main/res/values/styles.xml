@@ -19,7 +19,7 @@
 
     <!-- Section header -->
     <style name="textAppearanceSectionHeader" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textColor">#9C0</item>
+        <item name="android:textColor">#e4a933</item>
         <item name="android:textAllCaps">true</item>
     </style>
 
