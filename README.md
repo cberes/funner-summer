@@ -10,7 +10,10 @@ Funner Summer is an Android app that recommends fun activities. There is also a 
 
 You can find the app in the [Google Play Store](https://play.google.com/store/apps/details?id=net.seabears.funner.summer).
 
+## Icon
+
+Thank you [Molly Beres](https://mollyillustration.com/) for the beautiful icon!
+
 ## History
 
 I created this app in 2014, back in the times of Android KitKat. Originally the proxy weather service was a Java web service using Jersey, Spring, and Hystrix. It was way too complicated, but that's the technology I was using at the time.
-
