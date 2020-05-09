@@ -8,7 +8,7 @@ android {
         applicationId "net.seabears.funner.summer"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 2000003
+        versionCode 2000004
         versionName "1.0"
     }
 
@@ -24,8 +24,9 @@ android {
 dependencies {
     implementation project(':loaderEx')
     implementation 'com.google.guava:guava:29.0-android'
-    implementation 'com.google.android.gms:play-services:6.1.71'
-    implementation 'com.android.support:support-v13:20.0.0'
+    implementation 'com.google.android.gms:play-services-ads:9.0.0'
+    implementation 'com.google.android.gms:play-services-location:9.0.0'
+    implementation 'com.android.support:support-v13:23.0.0'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.0'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.8'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.8'

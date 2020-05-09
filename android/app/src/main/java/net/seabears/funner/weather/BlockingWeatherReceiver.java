@@ -27,7 +27,7 @@ public class BlockingWeatherReceiver extends WeatherReceiver
   @Override
   protected void onReceiveWeather(Context context, Weather weather)
   {
-    Log.d(getClass().getSimpleName(), "Received weather from service: " + weather);
+    Log.d(getClass().getSimpleName(), "Received weather: " + weather);
     LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
     this.weather = weather;
     this.received.countDown();

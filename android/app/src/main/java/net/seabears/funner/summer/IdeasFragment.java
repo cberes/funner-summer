@@ -22,9 +22,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -35,6 +37,47 @@ import com.google.android.gms.ads.AdView;
 public class IdeasFragment extends ProgressListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
 {
+  private static class Mutable<T>
+  {
+    private volatile T value;
+
+    public T get() {
+      return value;
+    }
+
+    public void set(final T value) {
+      this.value = value;
+    }
+  }
+
+  private static class StaticBlockOnWeatherSQLiteCursorLoader extends BlockOnWeatherSQLiteCursorLoader
+  {
+    private Mutable<SuggestArgs> suggestArgs;
+    private final Class<?> parent;
+
+    StaticBlockOnWeatherSQLiteCursorLoader(final Context context,
+                                           final SQLiteOpenHelper db,
+                                           final String rawQuery,
+                                           final BlockingWeatherReceiver weatherReceiver,
+                                           final Mutable<SuggestArgs> suggestArgs,
+                                           final Class<?> parent)
+    {
+      super(context, db, rawQuery, weatherReceiver);
+      this.parent = parent;
+      this.suggestArgs = suggestArgs;
+    }
+
+    @Override
+    protected String[] getArgs(final Weather weather)
+    {
+      suggestArgs.set(new SuggestArgs(suggestArgs.get().getCount(),
+              suggestArgs.get().getCrowd(), weather.getTemperature().intValue(), weather.getCondition()));
+      return Ideas.class.equals(parent)
+              ? SuggestionSqlQueryFactory.args(suggestArgs.get())
+              : RandomSqlQueryFactory.args(suggestArgs.get());
+    }
+  }
+
   public static final int LIST_COUNT_DEFAULT = 7;
 
   public static final String ARG_PARENT = "parent";
@@ -60,11 +103,13 @@ public class IdeasFragment extends ProgressListFragment
 
   private Date lastRefreshed;
 
-  private SuggestArgs suggestArgs;
+  private final Mutable<SuggestArgs> suggestArgs = new Mutable<>();
 
   private final BlockingWeatherReceiver weatherReceiver = new BlockingWeatherReceiver();
 
   private boolean firstAttemptToGetWeather = true;
+
+  private static boolean requestedPermission;
 
   private final LocationErrorReceiver errorReceiver = new LocationErrorReceiver()
   {
@@ -116,55 +161,91 @@ public class IdeasFragment extends ProgressListFragment
     // set list adapter for suggestions after adding ad view
     setListAdapter(mAdapter);
 
-    // Prepare the loader. Either re-connect with an existing one,
-    // or start a new one.
-    getLoaderManager().initLoader(0, getArguments(), this);
+    initLoaderAndAd();
+  }
 
-    // create ad request
-    if (showAds)
+  private void initLoaderAndAd()
+  {
+    if (PermissionChecker.isPermissionRequestNecessary(getActivity()))
     {
-      // Create an ad request. Check logcat output for the hashed device ID to
-      // get test ads on a physical device.
-      final AdRequest.Builder builder = new AdRequest.Builder()
-          .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-          .addTestDevice("DBDD5DE26EBEA960E58A133068032528");
-      Location location = weatherReceiver.getLocation();
-      if (location != null)
-      {
-        builder.setLocation(location);
-      }
-      final AdRequest adRequest = builder.build();
+      requestedPermission = true;
+      PermissionChecker.requestLocationPermission(this);
+    }
+    else
+    {
+      // Prepare the loader. Either re-connect with an existing one,
+      // or start a new one.
+      getLoaderManager().initLoader(0, getArguments(), this);
 
-      // Start loading the ad in the background.
-      adView.loadAd(adRequest);
+      if (License.getInstance().isAdsEnabled())
+      {
+        requestAd(true);
+      }
+    }
+  }
+
+  private void requestAd(final boolean useLocation)
+  {
+    // Create an ad request. Check logcat output for the hashed device ID to
+    // get test ads on a physical device.
+    final AdRequest.Builder builder = new AdRequest.Builder()
+            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+            .addTestDevice("DBDD5DE26EBEA960E58A133068032528");
+    Location location = useLocation ? weatherReceiver.getLocation() : null;
+    if (location != null)
+    {
+      builder.setLocation(location);
+    }
+    final AdRequest adRequest = builder.build();
+
+    // Start loading the ad in the background.
+    adView.loadAd(adRequest);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(final int requestCode,
+                                         final String permissions[],
+                                         final int[] grantResults)
+  {
+    if (PermissionChecker.isLocationPermissionResponse(requestCode))
+    {
+      boolean granted = PermissionChecker.isLocationPermissionGranted(grantResults);
+      if (granted)
+      {
+        Log.d(getClass().getSimpleName(), "Location permission was granted");
+        WeatherPullService.clear(getActivity());
+        observeWeather();
+      }
+      getLoaderManager().initLoader(0, getArguments(), this);
+
+      if (License.getInstance().isAdsEnabled())
+      {
+        requestAd(granted);
+      }
+    }
+    else
+    {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
   }
 
   // Called when a new Loader needs to be created
+  @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
     // Now create and return a CursorLoader that will take care of
     // creating a Cursor for the data being displayed.
-    suggestArgs = SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS));
+    suggestArgs.set(SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS)));
     final Context context = getActivity().getApplicationContext();
-    return new BlockOnWeatherSQLiteCursorLoader(
-        context,
-        new FunnerDbHelper(context),
-        Ideas.class.equals(parent)
-            ? SuggestionSqlQueryFactory.query(context)
-            : RandomSqlQueryFactory.query(context),
-        weatherReceiver)
-    {
-      @Override
-      protected String[] getArgs(Weather weather)
-      {
-        suggestArgs = new SuggestArgs(suggestArgs.getCount(),
-            suggestArgs.getCrowd(), weather.getTemperature().intValue(), weather.getCondition());
-        return Ideas.class.equals(parent)
-            ? SuggestionSqlQueryFactory.args(suggestArgs)
-            : RandomSqlQueryFactory.args(suggestArgs);
-      }
-    };
+    return new StaticBlockOnWeatherSQLiteCursorLoader(
+            getActivity().getApplicationContext(),
+            new FunnerDbHelper(context),
+            Ideas.class.equals(parent)
+                    ? SuggestionSqlQueryFactory.query(context)
+                    : RandomSqlQueryFactory.query(context),
+            weatherReceiver,
+            suggestArgs,
+            parent);
   }
 
   // Called when a previously created loader has finished loading
@@ -196,7 +277,7 @@ public class IdeasFragment extends ProgressListFragment
     Intent intent = new Intent(this.getActivity(), Pastime.class);
     intent.putExtra(Pastime.ARG_PASTIME_ID, id);
     intent.putExtra(Pastime.ARG_PARENT, parent);
-    intent.putExtra(Pastime.ARG_PASTIME_ARGS, suggestArgs);
+    intent.putExtra(Pastime.ARG_PASTIME_ARGS, suggestArgs.get());
     startActivity(intent);
   }
 
@@ -227,6 +308,12 @@ public class IdeasFragment extends ProgressListFragment
   public void onStart()
   {
     super.onStart();
+    if (requestedPermission || !PermissionChecker.isPermissionRequestNecessary(getActivity())) {
+      observeWeather();
+    }
+  }
+
+  private void observeWeather() {
     final boolean localFirstAttemptToGetWeather = firstAttemptToGetWeather;
     firstAttemptToGetWeather = false;
     WeatherPullService.observeWeather(getActivity(), weatherReceiver, errorReceiver, !localFirstAttemptToGetWeather);

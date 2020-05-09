@@ -18,6 +18,7 @@ import java.util.concurrent.TimeoutException;
 import net.seabears.funner.Weather;
 import net.seabears.funner.location.LocationErrorReceiver;
 import net.seabears.funner.location.LocationUtils;
+
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
@@ -33,12 +34,12 @@ import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 public class WeatherPullService extends IntentService implements
-    GooglePlayServicesClient.ConnectionCallbacks,
-    GooglePlayServicesClient.OnConnectionFailedListener
+    GoogleApiClient.ConnectionCallbacks,
+    GoogleApiClient.OnConnectionFailedListener
 {
   private static final String WEATHER_URL = "https://btcvd69xdc.execute-api.us-east-1.amazonaws.com/v1/api/weather?lat=%s&lng=%s&summary=true";
 
@@ -60,7 +61,7 @@ public class WeatherPullService extends IntentService implements
 
   private final ObjectMapper mapper;
 
-  private LocationClient mLocationClient;
+  private GoogleApiClient mLocationClient;
 
   private FutureTask<Location> locationTask;
 
@@ -99,7 +100,7 @@ public class WeatherPullService extends IntentService implements
   public static final String ERROR_ACTION = WeatherPullService.class.getName() + ".ERROR";
 
   public static void observeWeather(Activity activity, WeatherReceiver weatherReceiver, LocationErrorReceiver errorReceiver,
-      boolean ignoreErors)
+      boolean ignoreErrors)
   {
     // register a receiver
     // regardless of how the weather is retrieved, we'll send it via broadcast
@@ -118,11 +119,11 @@ public class WeatherPullService extends IntentService implements
       }
       broadcastResult(activity, weather);
     }
-    else if (ignoreErors || LocationUtils.servicesConnected(activity, true))
+    else if (ignoreErrors || LocationUtils.servicesConnected(activity, true))
     {
       // weather needs to be retrieved
       Intent intent = new Intent(activity, WeatherPullService.class);
-      intent.putExtra(ARG_IGNORE_ERRORS, ignoreErors);
+      intent.putExtra(ARG_IGNORE_ERRORS, ignoreErrors);
       activity.startService(intent);
     }
   }
@@ -154,13 +155,13 @@ public class WeatherPullService extends IntentService implements
         broadcastStatus(this, 99);
         if (weatherValid)
         {
-          // shorter cache time because the result was invalid
-          weather = getDefaultWeather();
-          writeWeatherToPreferences(this, weather, 15, TimeUnit.MINUTES);
+          writeWeatherToPreferences(this, weather, 45, TimeUnit.MINUTES);
         }
         else
         {
-          writeWeatherToPreferences(this, weather, 45, TimeUnit.MINUTES);
+          // shorter cache time because the result was invalid
+          weather = getDefaultWeather();
+          writeWeatherToPreferences(this, weather, 15, TimeUnit.MINUTES);
         }
       }
     }
@@ -217,6 +218,29 @@ public class WeatherPullService extends IntentService implements
         .putFloat(PREF_KEY_LOCATION_LATITUDE, (float) location.getLatitude())
         .putFloat(PREF_KEY_LOCATION_LONGITUDE, (float) location.getLongitude())
         .commit();
+  }
+
+  public static void clear(Context context)
+  {
+    clearLocationFromPreferences(context);
+    clearWeatherFromPreferences(context);
+  }
+
+  private static void clearWeatherFromPreferences(Context context)
+  {
+    PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .remove(PREF_KEY_WEATHER_CONDITION)
+            .remove(PREF_KEY_WEATHER_TEMPERATURE)
+            .remove(PREF_KEY_WEATHER_EXPIRATION)
+            .commit();
+  }
+
+  private static void clearLocationFromPreferences(Context context)
+  {
+    PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .remove(PREF_KEY_LOCATION_LATITUDE)
+            .remove(PREF_KEY_LOCATION_LONGITUDE)
+            .commit();
   }
 
   private static void broadcastStatus(Context context, int status)
@@ -310,9 +334,12 @@ public class WeatherPullService extends IntentService implements
         mLocationClient.connect();
         final Location location = locationTask.get(timeout, unit);
         Log.d(getClass().getSimpleName(), location != null ? "Found location" : "Could not find location");
-        writeLocationToPreferences(this, location);
-        broadcastResult(this, location);
-        return location;
+        if (location != null)
+        {
+            writeLocationToPreferences(this, location);
+        }
+        broadcastResult(this, location == null ? fallback : location);
+        return location == null ? fallback : location;
       } catch (InterruptedException e)
       {
         Log.e(getClass().getSimpleName(), e.getMessage(), e);
@@ -335,7 +362,11 @@ public class WeatherPullService extends IntentService implements
   public void onCreate()
   {
     super.onCreate();
-    mLocationClient = new LocationClient(this, this, this);
+    mLocationClient = new GoogleApiClient.Builder(this.getBaseContext())
+            .addApi(LocationServices.API)
+            .addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(this)
+            .build();
     locationTask = new FutureTask<Location>(new LocationCallable(mLocationClient));
   }
 
@@ -365,16 +396,16 @@ public class WeatherPullService extends IntentService implements
   }
 
   @Override
-  public void onDisconnected()
+  public void onConnectionSuspended(final int i)
   {
-    // do nothing
+
   }
 
   private static class LocationCallable implements Callable<Location>
   {
-    private LocationClient mLocationClient;
+    private GoogleApiClient mLocationClient;
 
-    public LocationCallable(LocationClient mLocationClient)
+    public LocationCallable(GoogleApiClient mLocationClient)
     {
       this.mLocationClient = mLocationClient;
     }
@@ -382,7 +413,7 @@ public class WeatherPullService extends IntentService implements
     @Override
     public Location call() throws Exception
     {
-      return mLocationClient.getLastLocation();
+      return LocationServices.FusedLocationApi.getLastLocation(mLocationClient);
     }
   }
 
