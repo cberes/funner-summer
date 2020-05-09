@@ -8,7 +8,7 @@ android {
         applicationId "net.seabears.funner.summer"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 2000002
+        versionCode 2000003
         versionName "1.0"
     }
 
