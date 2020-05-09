@@ -148,9 +148,11 @@ public class WeatherPullService extends IntentService implements
         Log.d(getClass().getSimpleName(), "Got location without error");
         broadcastStatus(this, 50);
         weather = findWeatherWithFallback(location, null, 10, TimeUnit.SECONDS);
-        Log.d(getClass().getSimpleName(), weather != null ? "Got weather without error" : "Got default weather");
+        boolean weatherValid = weather != null && weather.getTemperature() != null;
+        Log.d(getClass().getSimpleName(),
+                (weatherValid ? "Got weather without error" : "Got default weather") + ": " + weather);
         broadcastStatus(this, 99);
-        if (weather == null)
+        if (weatherValid)
         {
           // shorter cache time because the result was invalid
           weather = getDefaultWeather();
