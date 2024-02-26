@@ -4,28 +4,26 @@ import net.seabears.funner.Weather;
 import net.seabears.funner.db.ActionInsertTask;
 import net.seabears.funner.db.Crowd;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
-import net.seabears.funner.weather.BlockingWeatherReceiver;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
+
+import java.math.BigDecimal;
 
 public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void>
 {
   private final Activity activity;
   private final Class<?> parent;
   private final ActionInsertTask task;
-  private final BlockingWeatherReceiver weatherReceiver;
   private ProgressDialog progressDialog;
 
-  public ActionInsertInBackgroundTask(Activity activity, Class<?> parent, ActionInsertTask task, BlockingWeatherReceiver weatherReceiver)
+  public ActionInsertInBackgroundTask(Activity activity, Class<?> parent, ActionInsertTask task)
   {
     this.activity = activity;
     this.parent = parent;
     this.task = task;
-    this.weatherReceiver = weatherReceiver;
   }
 
   @Override
@@ -41,22 +39,15 @@ public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void
   @Override
   protected Void doInBackground(Crowd... params)
   {
-    try
-    {
-      // block until weather is known
-      Weather weather = weatherReceiver.get();
-      publishProgress((progressDialog.getMax() / 2) - 1);
-      // set arguments now that all are known
-      task.setPastimeArgs(new PastimeActionArgs(params[0], weather.getTemperature().intValue(), weather.getCondition()));
-      publishProgress(progressDialog.getMax() / 2);
-      // insert into database
-      task.insert();
-      publishProgress(progressDialog.getMax());
-    } catch (InterruptedException e)
-    {
-      // do nothing: thread will exit
-      Log.e(getClass().getSimpleName(), e.getMessage(), e);
-    }
+    // TODO get weather somehow
+    Weather weather = new Weather("cloudy", BigDecimal.valueOf(70));
+    publishProgress((progressDialog.getMax() / 2) - 1);
+    // set arguments now that all are known
+    task.setPastimeArgs(new PastimeActionArgs(params[0], weather.getTemperature().intValue(), weather.getCondition()));
+    publishProgress(progressDialog.getMax() / 2);
+    // insert into database
+    task.insert();
+    publishProgress(progressDialog.getMax());
     return null;
   }
 

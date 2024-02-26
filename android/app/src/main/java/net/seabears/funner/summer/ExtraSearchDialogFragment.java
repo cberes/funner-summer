@@ -4,24 +4,19 @@ import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.fragment.app.DialogFragment;
 
 public class ExtraSearchDialogFragment extends DialogFragment
 {
-  private String action;
-
-  public ExtraSearchDialogFragment(String action)
-  {
-    this.action = action;
-  }
-
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState)
   {
+    String action = getArguments().getString("action");
+
     // Use the Builder class for convenient dialog construction
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     final String message = String.format("%s %s?",

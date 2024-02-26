@@ -3,9 +3,9 @@ package net.seabears.funner.summer;
 import net.seabears.funner.db.Crowd;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import androidx.fragment.app.DialogFragment;
 
 public class ManualPastimeDialogFragment extends DialogFragment
 {

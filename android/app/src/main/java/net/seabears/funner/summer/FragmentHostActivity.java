@@ -1,15 +1,14 @@
 package net.seabears.funner.summer;
 
-import net.seabears.funner.summer.R;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
-public abstract class FragmentHostActivity extends Activity
+public abstract class FragmentHostActivity extends FragmentActivity
 {
-  private Fragment fragment;
+  private final Fragment fragment;
 
   public FragmentHostActivity(Fragment fragment)
   {
@@ -36,7 +35,7 @@ public abstract class FragmentHostActivity extends Activity
     //
     if (savedInstanceState == null)
     {
-      getFragmentManager().beginTransaction()
+      getSupportFragmentManager().beginTransaction()
           .add(R.id.fragment, fragment)
           .commit();
     }

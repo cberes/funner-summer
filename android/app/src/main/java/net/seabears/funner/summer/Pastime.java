@@ -10,16 +10,10 @@ import net.seabears.funner.ContextualDateFormatter;
 import net.seabears.funner.db.ActionInsertTask;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.db.SelectionMethod;
-import net.seabears.funner.location.LocationErrorReceiver;
-import net.seabears.funner.location.LocationUtils;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
-import net.seabears.funner.weather.BlockingWeatherReceiver;
-import net.seabears.funner.weather.WeatherPullService;
-import android.app.Activity;
-import android.app.LoaderManager;
+
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -40,10 +34,11 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
-import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
-
-public class Pastime extends Activity
+public class Pastime extends FragmentActivity
     implements LoaderManager.LoaderCallbacks<Cursor>
 {
   public static final String ARG_PASTIME_ARGS = "pastime_arguments";
@@ -60,7 +55,7 @@ public class Pastime extends Activity
 
   static
   {
-    SELECTION_METHODS = new HashMap<Class<?>, Long>(3);
+    SELECTION_METHODS = new HashMap<Class<?>, Long>(5);
     SELECTION_METHODS.put(Ideas.class, SelectionMethod.HISTORICAL.getId());
     SELECTION_METHODS.put(RandomPastimes.class, SelectionMethod.RANDOM.getId());
     SELECTION_METHODS.put(PastimeEditor.class, SelectionMethod.MANUAL.getId());
@@ -78,19 +73,6 @@ public class Pastime extends Activity
   private Class<?> parent;
 
   private FunnerDbHelper dbHelper;
-
-  private boolean firstAttemptToGetWeather = true;
-
-  private final BlockingWeatherReceiver weatherReceiver = new BlockingWeatherReceiver();
-
-  private final LocationErrorReceiver errorReceiver = new LocationErrorReceiver()
-  {
-    @Override
-    protected Activity getActivity()
-    {
-      return Pastime.this;
-    }
-  };
 
   // This is the Adapter being used to display the list's data
   private SimpleCursorAdapter mAdapter;
@@ -143,7 +125,7 @@ public class Pastime extends Activity
         }
       }
     };
-    getLoaderManager().initLoader(0, null, this);
+    LoaderManager.getInstance(this).initLoader(0, null, this);
 
     // settings
     LinearLayout settingsView = (LinearLayout) findViewById(R.id.pastime_settings);
@@ -174,15 +156,12 @@ public class Pastime extends Activity
         final long pastimeId = Pastime.this.id;
         final long selectionMethodId = SELECTION_METHODS.get(parent);
         final ActionInsertTask task = new ActionInsertTask(db, pastimeId, selectionMethodId);
-        final ActionInsertInBackgroundTask backgroundTask = new ActionInsertInBackgroundTask(Pastime.this, parent, task, weatherReceiver);
-        final boolean localFirstAttemptToGetWeather = firstAttemptToGetWeather;
-        firstAttemptToGetWeather = false;
-        WeatherPullService.observeWeather(Pastime.this, weatherReceiver, errorReceiver, !localFirstAttemptToGetWeather);
+        final ActionInsertInBackgroundTask backgroundTask = new ActionInsertInBackgroundTask(Pastime.this, parent, task);
 
         if (pastimeArgs == null)
         {
           // prompt for crowd setting
-          new ManualPastimeDialogFragment(backgroundTask).show(getFragmentManager(), null);
+          new ManualPastimeDialogFragment(backgroundTask).show(getSupportFragmentManager(), null);
         }
         else
         {
@@ -191,18 +170,6 @@ public class Pastime extends Activity
         }
       }
     });
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data)
-  {
-    if (requestCode == LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST)
-    {
-      // try to get the weather regardless of whether the error was resolved
-      final boolean ignoreErrors = true;
-      WeatherPullService.observeWeather(this, weatherReceiver, errorReceiver, ignoreErrors);
-    }
-    super.onActivityResult(requestCode, resultCode, data);
   }
 
   private void readArguments()

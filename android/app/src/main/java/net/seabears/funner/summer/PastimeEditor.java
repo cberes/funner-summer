@@ -1,12 +1,12 @@
 package net.seabears.funner.summer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
 import net.seabears.funner.db.FunnerDbHelper;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -21,8 +21,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import androidx.fragment.app.FragmentActivity;
 
-public class PastimeEditor extends Activity
+public class PastimeEditor extends FragmentActivity
 {
   public static final String ARG_PARENT = "parent";
 
@@ -159,7 +160,11 @@ public class PastimeEditor extends Activity
     if (!errorResourceIds.isEmpty())
     {
       errorResourceIds.addFirst(R.string.pastime_edit_error);
-      new ErrorReasonsDialogFragment(errorResourceIds).show(getFragmentManager(), null);
+      ErrorReasonsDialogFragment fragment = new ErrorReasonsDialogFragment();
+      Bundle bundle = new Bundle();
+      bundle.putIntegerArrayList("resourceIds", new ArrayList<>(errorResourceIds));
+      fragment.setArguments(bundle);
+      fragment.show(getSupportFragmentManager(), null);
       return;
     }
 

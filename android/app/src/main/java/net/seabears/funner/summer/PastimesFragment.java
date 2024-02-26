@@ -1,10 +1,8 @@
 package net.seabears.funner.summer;
 
 import net.seabears.funner.db.FunnerDbHelper;
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,8 +12,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-
-import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 
 public class PastimesFragment extends ProgressListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
@@ -60,7 +58,7 @@ public class PastimesFragment extends ProgressListFragment
 
     // Prepare the loader. Either re-connect with an existing one,
     // or start a new one.
-    getLoaderManager().initLoader(0, getArguments(), this);
+    LoaderManager.getInstance(this).initLoader(0, getArguments(), this);
   }
 
   @Override

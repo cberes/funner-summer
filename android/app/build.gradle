@@ -5,10 +5,10 @@ android {
 
     defaultConfig {
         applicationId "net.seabears.funner.summer"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 34
-        versionCode 2000004
-        versionName "1.0"
+        versionCode 2000005
+        versionName "2.0"
     }
 
     buildTypes {
@@ -22,9 +22,7 @@ android {
 }
 
 dependencies {
-    implementation project(':loaderEx')
     implementation 'com.google.guava:guava:29.0-android'
-    implementation 'com.google.android.gms:play-services-location:21.1.0'
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.0'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.8'

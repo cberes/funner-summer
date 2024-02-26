@@ -1,10 +1,10 @@
 package net.seabears.funner.summer;
 
-import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ProgressBar;
+import androidx.fragment.app.ListFragment;
 
 public abstract class ProgressListFragment extends ListFragment
 {

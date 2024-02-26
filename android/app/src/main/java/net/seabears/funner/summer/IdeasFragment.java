@@ -1,5 +1,6 @@
 package net.seabears.funner.summer;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -7,26 +8,20 @@ import java.util.Set;
 
 import net.seabears.funner.Weather;
 import net.seabears.funner.db.FunnerDbHelper;
-import net.seabears.funner.location.LocationErrorReceiver;
-import net.seabears.funner.location.LocationUtils;
 import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
-import net.seabears.funner.weather.BlockOnWeatherSQLiteCursorLoader;
-import net.seabears.funner.weather.BlockingWeatherReceiver;
-import net.seabears.funner.weather.WeatherPullService;
-import android.app.Activity;
-import android.app.LoaderManager;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import androidx.cursoradapter.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import androidx.annotation.NonNull;
+import androidx.loader.app.LoaderManager;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.loader.content.Loader;
 
 public class IdeasFragment extends ProgressListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
@@ -41,34 +36,6 @@ public class IdeasFragment extends ProgressListFragment
 
     public void set(final T value) {
       this.value = value;
-    }
-  }
-
-  private static class StaticBlockOnWeatherSQLiteCursorLoader extends BlockOnWeatherSQLiteCursorLoader
-  {
-    private Mutable<SuggestArgs> suggestArgs;
-    private final Class<?> parent;
-
-    StaticBlockOnWeatherSQLiteCursorLoader(final Context context,
-                                           final SQLiteOpenHelper db,
-                                           final String rawQuery,
-                                           final BlockingWeatherReceiver weatherReceiver,
-                                           final Mutable<SuggestArgs> suggestArgs,
-                                           final Class<?> parent)
-    {
-      super(context, db, rawQuery, weatherReceiver);
-      this.parent = parent;
-      this.suggestArgs = suggestArgs;
-    }
-
-    @Override
-    protected String[] getArgs(final Weather weather)
-    {
-      suggestArgs.set(new SuggestArgs(suggestArgs.get().getCount(),
-              suggestArgs.get().getCrowd(), weather.getTemperature().intValue(), weather.getCondition()));
-      return Ideas.class.equals(parent)
-              ? SuggestionSqlQueryFactory.args(suggestArgs.get())
-              : RandomSqlQueryFactory.args(suggestArgs.get());
     }
   }
 
@@ -93,21 +60,6 @@ public class IdeasFragment extends ProgressListFragment
   private Date lastRefreshed;
 
   private final Mutable<SuggestArgs> suggestArgs = new Mutable<>();
-
-  private final BlockingWeatherReceiver weatherReceiver = new BlockingWeatherReceiver();
-
-  private boolean firstAttemptToGetWeather = true;
-
-  private static boolean requestedPermission;
-
-  private final LocationErrorReceiver errorReceiver = new LocationErrorReceiver()
-  {
-    @Override
-    protected Activity getActivity()
-    {
-      return IdeasFragment.this.getActivity();
-    }
-  };
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState)
@@ -135,44 +87,7 @@ public class IdeasFragment extends ProgressListFragment
     // set list adapter for suggestions after adding ad view
     setListAdapter(mAdapter);
 
-    initLoaderAndAd();
-  }
-
-  private void initLoaderAndAd()
-  {
-    if (PermissionChecker.isPermissionRequestNecessary(getActivity()))
-    {
-      requestedPermission = true;
-      PermissionChecker.requestLocationPermission(this);
-    }
-    else
-    {
-      // Prepare the loader. Either re-connect with an existing one,
-      // or start a new one.
-      getLoaderManager().initLoader(0, getArguments(), this);
-    }
-  }
-
-  @Override
-  public void onRequestPermissionsResult(final int requestCode,
-                                         final String permissions[],
-                                         final int[] grantResults)
-  {
-    if (PermissionChecker.isLocationPermissionResponse(requestCode))
-    {
-      boolean granted = PermissionChecker.isLocationPermissionGranted(grantResults);
-      if (granted)
-      {
-        Log.d(getClass().getSimpleName(), "Location permission was granted");
-        WeatherPullService.clear(getActivity());
-        observeWeather();
-      }
-      getLoaderManager().initLoader(0, getArguments(), this);
-    }
-    else
-    {
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
+    LoaderManager.getInstance(this).initLoader(0, getArguments(), this);
   }
 
   // Called when a new Loader needs to be created
@@ -183,28 +98,24 @@ public class IdeasFragment extends ProgressListFragment
     // creating a Cursor for the data being displayed.
     suggestArgs.set(SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS)));
     final Context context = getActivity().getApplicationContext();
-    return new StaticBlockOnWeatherSQLiteCursorLoader(
-            getActivity().getApplicationContext(),
+    return new SQLiteCursorLoader(
+            context,
             new FunnerDbHelper(context),
             Ideas.class.equals(parent)
                     ? SuggestionSqlQueryFactory.query(context)
                     : RandomSqlQueryFactory.query(context),
-            weatherReceiver,
-            suggestArgs,
-            parent);
+            getArgs());
   }
 
-  // Called when a previously created loader has finished loading
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+  private String[] getArgs()
   {
-    // Swap the new cursor in. (The framework will take care of closing the
-    // old cursor once we return.)
-    lastRefreshed = new Date();
-    mAdapter.swapCursor(data);
-    if (data.getCount() == 0)
-    {
-      clear(R.string.empty);
-    }
+    // TODO get weather somehow
+    Weather weather = new Weather("cloudy", BigDecimal.valueOf(70));
+    suggestArgs.set(new SuggestArgs(suggestArgs.get().getCount(),
+            suggestArgs.get().getCrowd(), weather.getTemperature().intValue(), weather.getCondition()));
+    return Ideas.class.equals(parent)
+            ? SuggestionSqlQueryFactory.args(suggestArgs.get())
+            : RandomSqlQueryFactory.args(suggestArgs.get());
   }
 
   // Called when a previously created loader is reset, making the data
@@ -215,6 +126,18 @@ public class IdeasFragment extends ProgressListFragment
     // above is about to be closed. We need to make sure we are no
     // longer using it.
     mAdapter.swapCursor(null);
+  }
+
+  @Override
+  public void onLoadFinished(@NonNull final Loader<Cursor> loader, final Cursor data) {
+    // Swap the new cursor in. (The framework will take care of closing the
+    // old cursor once we return.)
+    lastRefreshed = new Date();
+    mAdapter.swapCursor(data);
+    if (data.getCount() == 0)
+    {
+      clear(R.string.empty);
+    }
   }
 
   @Override
@@ -229,39 +152,12 @@ public class IdeasFragment extends ProgressListFragment
 
   public void refresh()
   {
-    getLoaderManager().destroyLoader(0);
-    getLoaderManager().initLoader(0, getArguments(), this);
+    LoaderManager.getInstance(this).destroyLoader(0);
+    LoaderManager.getInstance(this).initLoader(0, getArguments(), this);
   }
 
   public Date getLastRefreshed()
   {
     return lastRefreshed;
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data)
-  {
-    if (requestCode == LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST)
-    {
-      // try to get the weather regardless of whether the error was resolved
-      final boolean ignoreErrors = true;
-      WeatherPullService.observeWeather(getActivity(), weatherReceiver, errorReceiver, ignoreErrors);
-    }
-    super.onActivityResult(requestCode, resultCode, data);
-  }
-
-  @Override
-  public void onStart()
-  {
-    super.onStart();
-    if (requestedPermission || !PermissionChecker.isPermissionRequestNecessary(getActivity())) {
-      observeWeather();
-    }
-  }
-
-  private void observeWeather() {
-    final boolean localFirstAttemptToGetWeather = firstAttemptToGetWeather;
-    firstAttemptToGetWeather = false;
-    WeatherPullService.observeWeather(getActivity(), weatherReceiver, errorReceiver, !localFirstAttemptToGetWeather);
   }
 }

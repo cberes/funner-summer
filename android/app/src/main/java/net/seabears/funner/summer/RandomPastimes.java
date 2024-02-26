@@ -7,23 +7,23 @@ import java.util.Locale;
 import net.seabears.funner.db.Crowd;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.legacy.app.FragmentPagerAdapter;
-import androidx.legacy.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
-public class RandomPastimes extends Activity implements ActionBar.TabListener
+public class RandomPastimes extends FragmentActivity implements ActionBar.TabListener
 {
   /**
    * The {@link PagerAdapter} that will provide
@@ -52,7 +52,7 @@ public class RandomPastimes extends Activity implements ActionBar.TabListener
 
     // Create the adapter that will return a fragment for each of the three
     // primary sections of the activity.
-    mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+    mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
     // Set up the ViewPager with the sections adapter.
     mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -242,7 +242,7 @@ public class RandomPastimes extends Activity implements ActionBar.TabListener
         {
           method.setAccessible(true);
           String tag = (String) method.invoke(null, viewId, position);
-          return getFragmentManager().findFragmentByTag(tag);
+          return getSupportFragmentManager().findFragmentByTag(tag);
         }
       } catch (Exception e)
       {
