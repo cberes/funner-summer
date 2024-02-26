@@ -3,6 +3,8 @@ package net.seabears.funner.weather;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.Callable;
@@ -38,7 +40,9 @@ public class WeatherPullService extends IntentService implements
     GooglePlayServicesClient.ConnectionCallbacks,
     GooglePlayServicesClient.OnConnectionFailedListener
 {
-  private static final String WEATHER_URL = "http://api.seabears.net:8080/weather/summary?lat=%f&lng=%f";
+  private static final String WEATHER_URL = "https://btcvd69xdc.execute-api.us-east-1.amazonaws.com/v1/api/weather?lat=%s&lng=%s&summary=true";
+
+  private static final String WEATHER_API_KEY = "ajrgSXpiHk6j4BKVmk8Sn7s97wwZ6PHf3DveA0W0";
 
   private static final String PREF_KEY_WEATHER_CONDITION = "weather_condition";
 
@@ -261,10 +265,11 @@ public class WeatherPullService extends IntentService implements
 
   private Weather findWeather(Location location, long timeout, TimeUnit unit) throws IOException
   {
-    URL url = new URL(String.format(WEATHER_URL, location.getLatitude(), location.getLongitude()));
+    URL url = new URL(String.format(WEATHER_URL, roundCoord(location.getLatitude()), roundCoord(location.getLongitude())));
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
     connection.setRequestProperty("Accept", "application/json");
+    connection.setRequestProperty("x-api-key", WEATHER_API_KEY);
     connection.setConnectTimeout((int) unit.toMillis(timeout) / 3);
     connection.setReadTimeout((int) unit.toMillis(timeout) - (int) unit.toMillis(timeout) / 3);
     try
@@ -275,6 +280,15 @@ public class WeatherPullService extends IntentService implements
     {
       connection.disconnect();
     }
+  }
+
+  private static String roundCoord(final double coord)
+  {
+    BigDecimal precision = BigDecimal.valueOf(20);
+    return BigDecimal.valueOf(coord).multiply(precision)
+      .setScale(0, RoundingMode.HALF_EVEN)
+      .divide(precision, 2, RoundingMode.HALF_EVEN)
+      .toString();
   }
 
   private static Location getDefaultLocation()
