@@ -7,7 +7,7 @@ import net.seabears.funner.Weather;
 import net.seabears.funner.weather.WeatherPullService.WeatherReceiver;
 import android.content.Context;
 import android.location.Location;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class BlockingWeatherReceiver extends WeatherReceiver
