@@ -24,7 +24,6 @@ android {
 dependencies {
     implementation project(':loaderEx')
     implementation 'com.google.guava:guava:29.0-android'
-    implementation 'com.google.android.gms:play-services-ads:9.0.0'
     implementation 'com.google.android.gms:play-services-location:21.1.0'
     implementation 'com.android.support:support-v13:23.0.0'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.0'

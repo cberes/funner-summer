@@ -9,7 +9,6 @@ import net.seabears.funner.Weather;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.location.LocationErrorReceiver;
 import net.seabears.funner.location.LocationUtils;
-import net.seabears.funner.summer.license.License;
 import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
@@ -23,16 +22,11 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 
 public class IdeasFragment extends ProgressListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
@@ -91,11 +85,6 @@ public class IdeasFragment extends ProgressListFragment
 
   private static final Set<Class<?>> PARENTS = new HashSet<Class<?>>(Arrays.<Class<?>> asList(Ideas.class, RandomPastimes.class));
 
-  /* Your ad unit id. Replace with your actual ad unit id. */
-  private static final String AD_UNIT_ID = "ca-app-pub-TODO_REPLACE_ME";
-
-  private AdView adView;
-
   private Class<?> parent;
 
   // This is the Adapter being used to display the list's data
@@ -143,21 +132,6 @@ public class IdeasFragment extends ProgressListFragment
         android.R.layout.simple_list_item_1, null,
         fromColumns, toViews, 0);
 
-    // we must add the ad view to the header before calling setListAdapter
-    // (older Android versions require it)
-    final boolean showAds = License.getInstance().isAdsEnabled();
-    if (showAds)
-    {
-      // Create an ad.
-      adView = new AdView(getActivity());
-      adView.setAdSize(AdSize.BANNER);
-      adView.setAdUnitId(AD_UNIT_ID);
-
-      // Add the AdView to the view hierarchy. The view will have no size
-      // until the ad is loaded.
-      getListView().addHeaderView(adView);
-    }
-
     // set list adapter for suggestions after adding ad view
     setListAdapter(mAdapter);
 
@@ -176,30 +150,7 @@ public class IdeasFragment extends ProgressListFragment
       // Prepare the loader. Either re-connect with an existing one,
       // or start a new one.
       getLoaderManager().initLoader(0, getArguments(), this);
-
-      if (License.getInstance().isAdsEnabled())
-      {
-        requestAd(true);
-      }
     }
-  }
-
-  private void requestAd(final boolean useLocation)
-  {
-    // Create an ad request. Check logcat output for the hashed device ID to
-    // get test ads on a physical device.
-    final AdRequest.Builder builder = new AdRequest.Builder()
-            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-            .addTestDevice("DBDD5DE26EBEA960E58A133068032528");
-    Location location = useLocation ? weatherReceiver.getLocation() : null;
-    if (location != null)
-    {
-      builder.setLocation(location);
-    }
-    final AdRequest adRequest = builder.build();
-
-    // Start loading the ad in the background.
-    adView.loadAd(adRequest);
   }
 
   @Override
@@ -217,11 +168,6 @@ public class IdeasFragment extends ProgressListFragment
         observeWeather();
       }
       getLoaderManager().initLoader(0, getArguments(), this);
-
-      if (License.getInstance().isAdsEnabled())
-      {
-        requestAd(granted);
-      }
     }
     else
     {
@@ -317,36 +263,5 @@ public class IdeasFragment extends ProgressListFragment
     final boolean localFirstAttemptToGetWeather = firstAttemptToGetWeather;
     firstAttemptToGetWeather = false;
     WeatherPullService.observeWeather(getActivity(), weatherReceiver, errorReceiver, !localFirstAttemptToGetWeather);
-  }
-
-  @Override
-  public void onResume()
-  {
-    super.onResume();
-    if (adView != null)
-    {
-      adView.resume();
-    }
-  }
-
-  @Override
-  public void onPause()
-  {
-    if (adView != null)
-    {
-      adView.pause();
-    }
-    super.onPause();
-  }
-
-  @Override
-  public void onDestroy()
-  {
-    // Destroy the AdView.
-    if (adView != null)
-    {
-      adView.destroy();
-    }
-    super.onDestroy();
   }
 }

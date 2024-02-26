@@ -13,7 +13,7 @@ public abstract class ProgressListFragment extends ListFragment
   @Override
   public void onActivityCreated(Bundle savedInstanceState)
   {
-    super.onCreate(savedInstanceState);
+    super.onActivityCreated(savedInstanceState);
 
     // Create a progress bar to display while the list loads
     progressBar = new ProgressBar(getActivity());
