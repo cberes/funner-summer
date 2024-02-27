@@ -117,7 +117,10 @@ public class PastimesFragment extends ProgressListFragment
     // This is called when the last Cursor provided to onLoadFinished()
     // above is about to be closed. We need to make sure we are no
     // longer using it.
-    mAdapter.swapCursor(null);
+    Cursor oldCursor = mAdapter.swapCursor(null);
+    if (oldCursor != null) {
+      oldCursor.close();
+    }
   }
 
   @Override

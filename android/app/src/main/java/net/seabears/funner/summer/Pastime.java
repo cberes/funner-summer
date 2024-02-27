@@ -34,6 +34,8 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -223,6 +225,7 @@ public class Pastime extends FragmentActivity
     return super.onOptionsItemSelected(item);
   }
 
+  @NonNull
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
@@ -237,13 +240,16 @@ public class Pastime extends FragmentActivity
   }
 
   @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+  public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data)
   {
     final LinearLayout historyView = (LinearLayout) findViewById(R.id.pastime_history);
     final Resources resources = getResources();
 
     // hide "loading" view
     ((TextView) findViewById(R.id.pastime_history_loading)).setVisibility(View.GONE);
+
+    // remove all child views, else we might add duplicate entries
+    historyView.removeAllViews();
 
     // add data views
     mAdapter.swapCursor(data);
@@ -265,9 +271,12 @@ public class Pastime extends FragmentActivity
   }
 
   @Override
-  public void onLoaderReset(Loader<Cursor> loader)
+  public void onLoaderReset(@NonNull Loader<Cursor> loader)
   {
-    mAdapter.swapCursor(null);
+    Cursor oldCursor = mAdapter.swapCursor(null);
+    if (oldCursor != null) {
+      oldCursor.close();
+    }
   }
 
   private View createDivider(Resources resources)

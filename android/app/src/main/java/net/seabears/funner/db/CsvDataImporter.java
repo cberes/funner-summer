@@ -37,7 +37,7 @@ public class CsvDataImporter
     this.resourceId = resourceId;
   }
 
-  private static enum DataColumn
+  private enum DataColumn
   {
     NAME(0),
     ACTION(1),
@@ -132,7 +132,7 @@ public class CsvDataImporter
     return map;
   }
 
-  private static interface RawDataConverter<T>
+  private interface RawDataConverter<T>
   {
     T convert(String s) throws ParseException;
   }

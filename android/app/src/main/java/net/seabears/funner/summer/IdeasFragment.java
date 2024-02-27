@@ -91,6 +91,7 @@ public class IdeasFragment extends ProgressListFragment
   }
 
   // Called when a new Loader needs to be created
+  @NonNull
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
@@ -110,7 +111,7 @@ public class IdeasFragment extends ProgressListFragment
   private String[] getArgs()
   {
     // TODO get weather somehow
-    Weather weather = new Weather("cloudy", BigDecimal.valueOf(70));
+    Weather weather = new Weather("clouds", BigDecimal.valueOf(70));
     suggestArgs.set(new SuggestArgs(suggestArgs.get().getCount(),
             suggestArgs.get().getCrowd(), weather.getTemperature().intValue(), weather.getCondition()));
     return Ideas.class.equals(parent)
@@ -120,12 +121,15 @@ public class IdeasFragment extends ProgressListFragment
 
   // Called when a previously created loader is reset, making the data
   // unavailable
-  public void onLoaderReset(Loader<Cursor> loader)
+  public void onLoaderReset(@NonNull Loader<Cursor> loader)
   {
     // This is called when the last Cursor provided to onLoadFinished()
     // above is about to be closed. We need to make sure we are no
     // longer using it.
-    mAdapter.swapCursor(null);
+    Cursor oldCursor = mAdapter.swapCursor(null);
+    if (oldCursor != null) {
+      oldCursor.close();
+    }
   }
 
   @Override

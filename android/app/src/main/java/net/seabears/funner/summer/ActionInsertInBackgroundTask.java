@@ -40,7 +40,7 @@ public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void
   protected Void doInBackground(Crowd... params)
   {
     // TODO get weather somehow
-    Weather weather = new Weather("cloudy", BigDecimal.valueOf(70));
+    Weather weather = new Weather("clouds", BigDecimal.valueOf(70));
     publishProgress((progressDialog.getMax() / 2) - 1);
     // set arguments now that all are known
     task.setPastimeArgs(new PastimeActionArgs(params[0], weather.getTemperature().intValue(), weather.getCondition()));

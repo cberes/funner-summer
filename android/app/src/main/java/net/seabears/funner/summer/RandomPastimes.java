@@ -15,6 +15,8 @@ import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -143,7 +145,7 @@ public class RandomPastimes extends FragmentActivity implements ActionBar.TabLis
    */
   public class SectionsPagerAdapter extends FragmentPagerAdapter
   {
-    private SparseArray<Date> fragmentsToRefresh = new SparseArray<Date>(getCount());
+    private final SparseArray<Date> fragmentsToRefresh = new SparseArray<Date>(getCount());
 
     private Fragment primary;
 
@@ -156,7 +158,7 @@ public class RandomPastimes extends FragmentActivity implements ActionBar.TabLis
     }
 
     @Override
-    public void setPrimaryItem(ViewGroup container, int position, Object object)
+    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object)
     {
       super.setPrimaryItem(container, position, object);
 
@@ -258,7 +260,7 @@ public class RandomPastimes extends FragmentActivity implements ActionBar.TabLis
     }
 
     @Override
-    public void startUpdate(ViewGroup container)
+    public void startUpdate(@NonNull ViewGroup container)
     {
       super.startUpdate(container);
       for (int i = 0; i < getCount(); ++i)
