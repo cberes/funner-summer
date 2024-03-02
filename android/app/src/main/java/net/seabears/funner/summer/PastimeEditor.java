@@ -75,8 +75,8 @@ public class PastimeEditor extends FragmentActivity
       button.setText(R.string.pastime_update);
 
       cursor.moveToFirst();
-      textAction.setText(cursor.getString(cursor.getColumnIndex("action_name")));
-      textName.setText(cursor.getString(cursor.getColumnIndex("name")));
+      textAction.setText(cursor.getString(cursor.getColumnIndexOrThrow("action_name")));
+      textName.setText(cursor.getString(cursor.getColumnIndexOrThrow("name")));
     }
     else
     {

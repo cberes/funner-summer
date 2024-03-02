@@ -99,9 +99,9 @@ public class Pastime extends FragmentActivity
             "_id = ?", new String[] { String.valueOf(id) },
             null, null, null);
     cursor.moveToFirst();
-    final String action = cursor.getString(cursor.getColumnIndex("action_name"));
-    final boolean active = cursor.getInt(cursor.getColumnIndex("active")) != 0;
-    custom = cursor.getInt(cursor.getColumnIndex("custom")) != 0;
+    final String action = cursor.getString(cursor.getColumnIndexOrThrow("action_name"));
+    final boolean active = cursor.getInt(cursor.getColumnIndexOrThrow("active")) != 0;
+    custom = cursor.getInt(cursor.getColumnIndexOrThrow("custom")) != 0;
 
     // pastime details
     setTitle(action);
