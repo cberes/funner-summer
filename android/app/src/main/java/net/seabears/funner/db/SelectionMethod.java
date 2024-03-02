@@ -10,7 +10,7 @@ public enum SelectionMethod
 
   private final long id;
 
-  private SelectionMethod(long id)
+  SelectionMethod(long id)
   {
     this.id = id;
   }

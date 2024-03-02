@@ -1,5 +1,7 @@
 package net.seabears.funner;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -42,12 +44,13 @@ public class Weather implements Serializable
     this.temperature = temperature;
   }
 
+  @NonNull
   @Override
   public String toString()
   {
-    return new StringBuilder("Weather [")
-        .append("condition=").append(condition)
-        .append(", temperature=").append(temperature)
-        .append("]").toString();
+    return "Weather [" +
+            "condition=" + condition +
+            ", temperature=" + temperature +
+            "]";
   }
 }

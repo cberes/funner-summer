@@ -1,4 +1,4 @@
-package net.seabears.funner.summer;
+package net.seabears.funner.db;
 
 import android.content.Context;
 import android.database.Cursor;

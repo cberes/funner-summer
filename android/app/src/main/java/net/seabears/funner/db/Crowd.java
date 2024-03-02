@@ -8,7 +8,7 @@ public enum Crowd
 
   private final String code;
 
-  private Crowd(String code)
+  Crowd(String code)
   {
     this.code = code;
   }

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import net.seabears.funner.summer.R;
 import android.annotation.SuppressLint;
@@ -23,14 +24,19 @@ public class ContextualDateFormatter
   private final Calendar yesterday;
   private final Calendar first;
 
-  @SuppressLint("SimpleDateFormat")
-  public ContextualDateFormatter(Context context)
-  {
+  public ContextualDateFormatter(Context context) {
+    this(DateFormat.getDateFormat(context), DateFormat.getTimeFormat(context),
+            ' ' + context.getResources().getString(R.string.at) + ' ',
+            context.getResources().getString(R.string.yesterday));
+  }
+
+  public ContextualDateFormatter(java.text.DateFormat dateFormat, java.text.DateFormat timeFormat,
+                                 String dateTimeSep, String yesterdayStr) {
+    this.dateFormat = dateFormat;
+    this.timeFormat = timeFormat;
     dateFormatThisYear = new SimpleDateFormat("MMMM d");
-    dateFormat = DateFormat.getDateFormat(context);
-    timeFormat = DateFormat.getTimeFormat(context);
-    dateTimeSep = ' ' + context.getResources().getString(R.string.at) + ' ';
-    yesterdayStr = context.getResources().getString(R.string.yesterday);
+    this.dateTimeSep = dateTimeSep;
+    this.yesterdayStr = yesterdayStr;
 
     today = Calendar.getInstance();
     today.set(Calendar.HOUR, 0);

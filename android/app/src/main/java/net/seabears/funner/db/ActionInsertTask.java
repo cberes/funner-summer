@@ -1,5 +1,6 @@
 package net.seabears.funner.db;
 
+import net.seabears.funner.db.Statistic;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import net.seabears.funner.Weather;
 import net.seabears.funner.db.FunnerDbHelper;
+import net.seabears.funner.db.SQLiteCursorLoader;
 import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
 import net.seabears.funner.summer.suggest.SuggestArgs;
 import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;

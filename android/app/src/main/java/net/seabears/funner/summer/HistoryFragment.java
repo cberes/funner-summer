@@ -4,6 +4,7 @@ import java.text.ParseException;
 
 import net.seabears.funner.ContextualDateFormatter;
 import net.seabears.funner.db.FunnerDbHelper;
+import net.seabears.funner.db.SQLiteCursorLoader;
 
 import android.content.Intent;
 import android.database.Cursor;

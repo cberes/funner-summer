@@ -8,7 +8,7 @@ public enum Statistic
 
   private final long id;
 
-  private Statistic(long id)
+  Statistic(long id)
   {
     this.id = id;
   }
