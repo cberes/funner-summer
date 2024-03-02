@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
@@ -102,7 +104,7 @@ public class PastimesFragment extends ProgressListFragment
   }
 
   @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+  public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data)
   {
     // Swap the new cursor in. (The framework will take care of closing the
     // old cursor once we return.)
@@ -114,7 +116,7 @@ public class PastimesFragment extends ProgressListFragment
   }
 
   @Override
-  public void onLoaderReset(Loader<Cursor> loader)
+  public void onLoaderReset(@NonNull Loader<Cursor> loader)
   {
     // This is called when the last Cursor provided to onLoadFinished()
     // above is about to be closed. We need to make sure we are no

@@ -42,7 +42,6 @@ public class PastimeEditor extends FragmentActivity
 
   private FunnerDbHelper dbHelper;
 
-  private Button button;
   private EditText textAction;
   private EditText textName;
 
@@ -65,7 +64,7 @@ public class PastimeEditor extends FragmentActivity
             "_id = ? and custom = 1", new String[] { String.valueOf(id) },
             null, null, null);
 
-    button = (Button) findViewById(R.id.button_pastime_save);
+    Button button = (Button) findViewById(R.id.button_pastime_save);
     textAction = (EditText) findViewById(R.id.text_pastime_prompt);
     textName = (EditText) findViewById(R.id.text_pastime_name);
 
@@ -83,6 +82,7 @@ public class PastimeEditor extends FragmentActivity
       // be safe, reset id to default
       id = 0;
     }
+    cursor.close();
 
     textName.setOnEditorActionListener(new OnEditorActionListener()
     {
@@ -128,19 +128,19 @@ public class PastimeEditor extends FragmentActivity
     final String action = textAction.getText().toString().trim();
 
     // check for duplicate name
-    if (dbHelper.getReadableDatabase()
+    if (countAndClose(dbHelper.getReadableDatabase()
         .query("pastime", new String[] { "_id" },
             "name = ? and _id <> ?", new String[] { name, String.valueOf(id) },
-            null, null, null).getCount() > 0)
+            null, null, null)) > 0)
     {
       errorResourceIds.add(R.string.pastime_edit_error_duplicate_name);
     }
 
     // check for duplicate action name
-    if (dbHelper.getReadableDatabase()
+    if (countAndClose(dbHelper.getReadableDatabase()
         .query("pastime", new String[] { "_id" },
             "action_name = ? and _id <> ? collate nocase", new String[] { action, String.valueOf(id) },
-            null, null, null).getCount() > 0)
+            null, null, null)) > 0)
     {
       errorResourceIds.add(R.string.pastime_edit_error_duplicate_action);
     }
@@ -206,5 +206,11 @@ public class PastimeEditor extends FragmentActivity
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  private static int countAndClose(Cursor cursor) {
+    int count = cursor.getCount();
+    cursor.close();
+    return count;
   }
 }

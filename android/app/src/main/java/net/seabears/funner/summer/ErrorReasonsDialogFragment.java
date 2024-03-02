@@ -6,10 +6,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 public class ErrorReasonsDialogFragment extends DialogFragment
 {
+  @NonNull
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState)
   {
@@ -26,7 +29,12 @@ public class ErrorReasonsDialogFragment extends DialogFragment
 
   private String buildMessage()
   {
-    List<Integer> resourceIds = getArguments().getIntegerArrayList("resourceIds");
+    Bundle arguments = getArguments();
+    List<Integer> resourceIds = arguments == null ? null : arguments.getIntegerArrayList("resourceIds");
+    return resourceIds == null || resourceIds.isEmpty() ? "" : buildMessageNotEmpty(resourceIds);
+  }
+
+  private String buildMessageNotEmpty(List<Integer> resourceIds) {
     StringBuilder message = new StringBuilder(getText(resourceIds.get(0)));
     for (int resourceId : resourceIds.subList(1, resourceIds.size()))
     {

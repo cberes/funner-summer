@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 public class ManualPastimeDialogFragment extends DialogFragment
@@ -16,6 +18,7 @@ public class ManualPastimeDialogFragment extends DialogFragment
     this.task = task;
   }
 
+  @NonNull
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState)
   {
