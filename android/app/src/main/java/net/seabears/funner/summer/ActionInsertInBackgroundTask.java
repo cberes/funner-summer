@@ -1,29 +1,31 @@
 package net.seabears.funner.summer;
 
-import net.seabears.funner.Weather;
 import net.seabears.funner.db.ActionInsertTask;
 import net.seabears.funner.db.Crowd;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
+import net.seabears.funner.weather.Weather;
+import net.seabears.funner.weather.WeatherService;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import java.math.BigDecimal;
-
 public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void>
 {
   private final Activity activity;
   private final Class<?> parent;
   private final ActionInsertTask task;
+  private final WeatherService weatherService;
   private ProgressDialog progressDialog;
 
-  public ActionInsertInBackgroundTask(Activity activity, Class<?> parent, ActionInsertTask task)
+  public ActionInsertInBackgroundTask(Activity activity, Class<?> parent, ActionInsertTask task, WeatherService weatherService)
   {
     this.activity = activity;
     this.parent = parent;
     this.task = task;
+    this.weatherService = weatherService;
   }
 
   @Override
@@ -39,11 +41,10 @@ public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void
   @Override
   protected Void doInBackground(Crowd... params)
   {
-    // TODO get weather somehow
-    Weather weather = new Weather("clouds", BigDecimal.valueOf(70));
+    Weather weather = weatherService.getWeather(activity);
     publishProgress((progressDialog.getMax() / 2) - 1);
     // set arguments now that all are known
-    task.setPastimeArgs(new PastimeActionArgs(params[0], weather.getTemperature().intValue(), weather.getCondition()));
+    task.setPastimeArgs(new PastimeActionArgs(params[0], weather.getTemperature(), weather.getCondition()));
     publishProgress(progressDialog.getMax() / 2);
     // insert into database
     task.insert();

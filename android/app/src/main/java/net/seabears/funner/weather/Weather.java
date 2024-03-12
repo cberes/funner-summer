@@ -1,24 +1,20 @@
-package net.seabears.funner;
+package net.seabears.funner.weather;
 
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Weather implements Serializable
 {
   private static final long serialVersionUID = -7091862077507499417L;
 
   private String condition;
-  private BigDecimal temperature;
+  private int temperature;
 
   public Weather()
   {}
 
-  public Weather(String condition, BigDecimal temperature)
+  public Weather(String condition, int temperature)
   {
     this.condition = condition;
     this.temperature = temperature;
@@ -34,12 +30,12 @@ public class Weather implements Serializable
     this.condition = condition;
   }
 
-  public BigDecimal getTemperature()
+  public int getTemperature()
   {
     return temperature;
   }
 
-  public void setTemperature(BigDecimal temperature)
+  public void setTemperature(int temperature)
   {
     this.temperature = temperature;
   }

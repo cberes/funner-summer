@@ -12,6 +12,7 @@ import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.db.SQLiteCursorLoader;
 import net.seabears.funner.db.SelectionMethod;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
+import net.seabears.funner.weather.WeatherService;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -79,6 +80,8 @@ public class Pastime extends FragmentActivity
 
   // This is the Adapter being used to display the list's data
   private SimpleCursorAdapter mAdapter;
+
+  private final WeatherService weatherService = new WeatherService();
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -160,7 +163,7 @@ public class Pastime extends FragmentActivity
         final long pastimeId = Pastime.this.id;
         final long selectionMethodId = SELECTION_METHODS.get(parent);
         final ActionInsertTask task = new ActionInsertTask(db, pastimeId, selectionMethodId);
-        final ActionInsertInBackgroundTask backgroundTask = new ActionInsertInBackgroundTask(Pastime.this, parent, task);
+        final ActionInsertInBackgroundTask backgroundTask = new ActionInsertInBackgroundTask(Pastime.this, parent, task, weatherService);
 
         if (pastimeArgs == null)
         {

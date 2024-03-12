@@ -4,6 +4,9 @@ import java.util.Locale;
 
 import net.seabears.funner.db.Crowd;
 import net.seabears.funner.summer.suggest.SuggestArgs;
+import net.seabears.funner.weather.Weather;
+import net.seabears.funner.weather.WeatherService;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -33,6 +36,8 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
    * The {@link ViewPager} that will host the section contents.
    */
   private ViewPager mViewPager;
+
+  private final WeatherService weatherService = new WeatherService();
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -113,6 +118,12 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
       Intent intent = new Intent(this, PastimeEditor.class);
       intent.putExtra(PastimeEditor.ARG_PARENT, Ideas.class);
       startActivity(intent);
+      return true;
+    }
+    else if (id == R.id.action_weather)
+    {
+      startActivity(new Intent(this, WeatherEditor.class));
+      return true;
     }
     return super.onOptionsItemSelected(item);
   }
@@ -133,6 +144,10 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
   public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
   {}
 
+  // TODO how can I update the IdeasFragment from here?
+  // onStart is called after returning from WeatherEditor
+  // or onActivityResult, but I think I'd have to remove the back button from WeatherEditor
+
   /**
    * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one
    * of the sections/tabs/pages.
@@ -147,27 +162,31 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
     @Override
     public Fragment getItem(int position)
     {
-      final int count = IdeasFragment.LIST_COUNT_DEFAULT;
-      final IdeasFragment fragment = new IdeasFragment();
-      final Bundle args = new Bundle();
-
-      args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
-      args.putSerializable(IdeasFragment.ARG_PARENT, Ideas.class);
+      Crowd crowd;
       switch (position)
       {
-      case 0:
-        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.SINGLE, 0, null).toBundle());
-        break;
-      case 1:
-        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.COUPLE, 0, null).toBundle());
-        break;
-      case 2:
-        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.GROUP, 0, null).toBundle());
-        break;
+        case 0:
+          crowd = Crowd.SINGLE;
+          break;
+        case 1:
+          crowd = Crowd.COUPLE;
+          break;
+        case 2:
+        default:
+          crowd = Crowd.GROUP;
+          break;
       }
+
+      final int count = IdeasFragment.LIST_COUNT_DEFAULT;
+      final Weather weather = weatherService.getWeather(Ideas.this);
+
+      final Bundle args = new Bundle();
+      args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
+      args.putSerializable(IdeasFragment.ARG_PARENT, Ideas.class);
+      args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
+              new SuggestArgs(count, crowd, weather.getTemperature(), weather.getCondition()).toBundle());
+
+      final IdeasFragment fragment = new IdeasFragment();
       fragment.setArguments(args);
       return fragment;
     }

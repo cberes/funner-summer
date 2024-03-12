@@ -6,6 +6,9 @@ import java.util.Locale;
 
 import net.seabears.funner.db.Crowd;
 import net.seabears.funner.summer.suggest.SuggestArgs;
+import net.seabears.funner.weather.Weather;
+import net.seabears.funner.weather.WeatherService;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -40,6 +43,8 @@ public class RandomPastimes extends FragmentActivity implements ActionBar.TabLis
    * The {@link ViewPager} that will host the section contents.
    */
   private ViewPager mViewPager;
+
+  private final WeatherService weatherService = new WeatherService();
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -170,27 +175,31 @@ public class RandomPastimes extends FragmentActivity implements ActionBar.TabLis
     @Override
     public Fragment getItem(int position)
     {
-      final int count = IdeasFragment.LIST_COUNT_DEFAULT;
-      final IdeasFragment fragment = new IdeasFragment();
-      final Bundle args = new Bundle();
-
-      args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
-      args.putSerializable(IdeasFragment.ARG_PARENT, RandomPastimes.class);
+      Crowd crowd;
       switch (position)
       {
-      case 0:
-        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.SINGLE, 0, null).toBundle());
-        break;
-      case 1:
-        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.COUPLE, 0, null).toBundle());
-        break;
-      case 2:
-        args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-            new SuggestArgs(count, Crowd.GROUP, 0, null).toBundle());
-        break;
+        case 0:
+          crowd = Crowd.SINGLE;
+          break;
+        case 1:
+          crowd = Crowd.COUPLE;
+          break;
+        case 2:
+        default:
+          crowd = Crowd.GROUP;
+          break;
       }
+
+      final int count = IdeasFragment.LIST_COUNT_DEFAULT;
+      final Weather weather = weatherService.getWeather(RandomPastimes.this);
+
+      final Bundle args = new Bundle();
+      args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
+      args.putSerializable(IdeasFragment.ARG_PARENT, RandomPastimes.class);
+      args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
+              new SuggestArgs(count, crowd, weather.getTemperature(), weather.getCondition()).toBundle());
+
+      final IdeasFragment fragment = new IdeasFragment();
       fragment.setArguments(args);
       return fragment;
     }

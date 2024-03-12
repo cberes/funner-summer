@@ -1,37 +1,37 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="net.seabears.funner.summer.Ideas" >
 
     <item
+        android:id="@+id/action_weather"
+        android:orderInCategory="40"
+        android:icon="@drawable/ic_action_weather"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_weather_edit" />
+
+    <item
         android:id="@+id/action_pastime_create"
         android:orderInCategory="50"
-        android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_new"
-        android:title="@string/action_pastime_create"/>
+        android:showAsAction="ifRoom"
+        android:title="@string/action_pastime_create" />
 
     <item
         android:id="@+id/action_pastimes"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_pastimes"/>
+        android:title="@string/action_pastimes" />
 
     <item
         android:id="@+id/action_random"
         android:orderInCategory="200"
         android:showAsAction="never"
-        android:title="@string/action_random"/>
+        android:title="@string/action_random" />
 
     <item
         android:id="@+id/action_history"
         android:orderInCategory="300"
         android:showAsAction="never"
-        android:title="@string/action_history"/>
-<!--
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="400"
-        android:showAsAction="never"
-        android:icon="@drawable/ic_action_settings"
-        android:title="@string/action_settings"/>
--->
+        android:title="@string/action_history" />
 </menu>

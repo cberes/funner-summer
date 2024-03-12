@@ -1,12 +1,10 @@
 package net.seabears.funner.summer;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.seabears.funner.Weather;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.db.SQLiteCursorLoader;
 import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
@@ -106,15 +104,11 @@ public class IdeasFragment extends ProgressListFragment
             Ideas.class.equals(parent)
                     ? SuggestionSqlQueryFactory.query(context)
                     : RandomSqlQueryFactory.query(context),
-            getArgs());
+            queryArgs());
   }
 
-  private String[] getArgs()
+  private String[] queryArgs()
   {
-    // TODO get weather somehow
-    Weather weather = new Weather("clouds", BigDecimal.valueOf(70));
-    suggestArgs.set(new SuggestArgs(suggestArgs.get().getCount(),
-            suggestArgs.get().getCrowd(), weather.getTemperature().intValue(), weather.getCondition()));
     return Ideas.class.equals(parent)
             ? SuggestionSqlQueryFactory.args(suggestArgs.get())
             : RandomSqlQueryFactory.args(suggestArgs.get());

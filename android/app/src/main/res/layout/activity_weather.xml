@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/view_vertical_margin"
+            android:textAppearance="@style/textAppearanceSectionHeader"
+            android:ellipsize="none"
+            android:scrollHorizontally="false"
+            android:text="@string/weather_condition"
+            android:labelFor="@+id/radio_weather" />
+
+        <RadioGroup
+            android:id="@+id/radio_weather"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <RadioButton
+                android:id="@+id/radio_clear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_clear" />
+
+            <RadioButton
+                android:id="@+id/radio_clouds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_clouds" />
+
+            <RadioButton
+                android:id="@+id/radio_drizzle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_drizzle" />
+
+            <RadioButton
+                android:id="@+id/radio_rain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_rain" />
+
+            <RadioButton
+                android:id="@+id/radio_thunderstorm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_thunderstorm" />
+
+            <RadioButton
+                android:id="@+id/radio_snow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_snow" />
+
+            <RadioButton
+                android:id="@+id/radio_atmosphere"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_atmosphere" />
+
+            <RadioButton
+                android:id="@+id/radio_extreme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/weather_extreme" />
+        </RadioGroup>
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/view_vertical_margin"
+            android:layout_marginTop="@dimen/view_vertical_margin"
+            android:textAppearance="@style/textAppearanceSectionHeader"
+            android:ellipsize="none"
+            android:scrollHorizontally="false"
+            android:text="@string/weather_temperature"
+            android:labelFor="@+id/seek_temperature"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <SeekBar
+                android:id="@+id/seek_temperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/view_vertical_margin"
+                android:layout_weight="1"
+                android:imeOptions="actionDone"
+                android:nextFocusDown="@+id/button_weather_done" />
+
+            <TextView
+                android:id="@+id/text_temperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                android:text="" />
+
+        </LinearLayout>
+
+        <Button android:id="@+id/button_weather_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/view_vertical_margin"
+            android:text="@string/ok" />
+
+    </LinearLayout>
+
+</ScrollView>
