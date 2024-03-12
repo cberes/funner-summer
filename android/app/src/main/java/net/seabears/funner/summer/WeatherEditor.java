@@ -57,11 +57,12 @@ public class WeatherEditor extends FragmentActivity {
         seek.setMax(150);
         seek.setProgress(weather.getTemperature());
         TextView text = (TextView) findViewById(R.id.text_temperature);
+        text.setText(formatTemperature(weather.getTemperature()));
 
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int temperature, boolean fromUser) {
-                text.setText(String.format(getResources().getConfiguration().locale, "%d°", temperature));
+                text.setText(formatTemperature(temperature));
                 weather.setTemperature(temperature);
                 weatherService.setTemperature(WeatherEditor.this, temperature);
             }
@@ -111,5 +112,9 @@ public class WeatherEditor extends FragmentActivity {
             idToCondition.put(entry.getValue(), entry.getKey());
         }
         return idToCondition;
+    }
+
+    private String formatTemperature(int temperature) {
+        return String.format(getResources().getConfiguration().locale, "%d°", temperature);
     }
 }
