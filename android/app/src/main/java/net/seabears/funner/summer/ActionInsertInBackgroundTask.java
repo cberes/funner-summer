@@ -44,7 +44,7 @@ public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void
     Weather weather = weatherService.getWeather(activity);
     publishProgress((progressDialog.getMax() / 2) - 1);
     // set arguments now that all are known
-    task.setPastimeArgs(new PastimeActionArgs(params[0], weather.getTemperature(), weather.getCondition()));
+    task.setPastimeArgs(new PastimeActionArgs(params[0], weather.getTemperatureAsF(), weather.getCondition()));
     publishProgress(progressDialog.getMax() / 2);
     // insert into database
     task.insert();

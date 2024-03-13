@@ -10,14 +10,15 @@ public class Weather implements Serializable
 
   private String condition;
   private int temperature;
+  private TemperatureUnit temperatureUnit;
 
   public Weather()
   {}
 
-  public Weather(String condition, int temperature)
-  {
+  public Weather(String condition, int temperature, TemperatureUnit temperatureUnit) {
     this.condition = condition;
     this.temperature = temperature;
+    this.temperatureUnit = temperatureUnit;
   }
 
   public String getCondition()
@@ -30,6 +31,11 @@ public class Weather implements Serializable
     this.condition = condition;
   }
 
+  public int getTemperatureAsF()
+  {
+    return temperatureUnit.toFahrenheit(temperature);
+  }
+
   public int getTemperature()
   {
     return temperature;
@@ -40,13 +46,21 @@ public class Weather implements Serializable
     this.temperature = temperature;
   }
 
+  public TemperatureUnit getTemperatureUnit() {
+    return temperatureUnit;
+  }
+
+  public void setTemperatureUnit(TemperatureUnit temperatureUnit) {
+    this.temperatureUnit = temperatureUnit;
+  }
+
   @NonNull
   @Override
-  public String toString()
-  {
-    return "Weather [" +
-            "condition=" + condition +
+  public String toString() {
+    return "Weather{" +
+            "condition='" + condition + '\'' +
             ", temperature=" + temperature +
-            "]";
+            ", temperatureUnit=" + temperatureUnit +
+            '}';
   }
 }

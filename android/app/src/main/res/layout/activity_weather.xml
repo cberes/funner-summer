@@ -109,6 +109,28 @@
 
         </LinearLayout>
 
+        <RadioGroup
+            android:id="@+id/radio_temperature_unit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radio_temperature_f"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/fahrenheit" />
+
+            <RadioButton
+                android:id="@+id/radio_temperature_c"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/celsius" />
+
+        </RadioGroup>
+
         <Button android:id="@+id/button_weather_done"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

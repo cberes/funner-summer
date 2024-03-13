@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -23,6 +25,8 @@ import androidx.viewpager.widget.ViewPager;
 
 public class Ideas extends FragmentActivity implements ActionBar.TabListener
 {
+  private static final int REQUEST_WEATHER = 1;
+
   /**
    * The {@link PagerAdapter} that will provide
    * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -122,7 +126,7 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
     }
     else if (id == R.id.action_weather)
     {
-      startActivity(new Intent(this, WeatherEditor.class));
+      startActivityForResult(new Intent(this, WeatherEditor.class), REQUEST_WEATHER);
       return true;
     }
     return super.onOptionsItemSelected(item);
@@ -144,9 +148,18 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
   public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
   {}
 
-  // TODO how can I update the IdeasFragment from here?
-  // onStart is called after returning from WeatherEditor
-  // or onActivityResult, but I think I'd have to remove the back button from WeatherEditor
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+  {
+    // TODO how can I update the IdeasFragment from here?
+    // maybe this: https://developer.android.com/guide/fragments/communicate
+    // Fragment fragment = mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem());
+    // TODO set new arguments!
+    // if (requestCode == REQUEST_WEATHER && resultCode == RESULT_OK)
+    // {
+    // }
+    super.onActivityResult(requestCode, resultCode, data);
+  }
 
   /**
    * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one
@@ -184,7 +197,7 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
       args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
       args.putSerializable(IdeasFragment.ARG_PARENT, Ideas.class);
       args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-              new SuggestArgs(count, crowd, weather.getTemperature(), weather.getCondition()).toBundle());
+              new SuggestArgs(count, crowd, weather.getTemperatureAsF(), weather.getCondition()).toBundle());
 
       final IdeasFragment fragment = new IdeasFragment();
       fragment.setArguments(args);

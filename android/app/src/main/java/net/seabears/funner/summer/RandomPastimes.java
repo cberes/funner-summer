@@ -197,7 +197,7 @@ public class RandomPastimes extends FragmentActivity implements ActionBar.TabLis
       args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
       args.putSerializable(IdeasFragment.ARG_PARENT, RandomPastimes.class);
       args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-              new SuggestArgs(count, crowd, weather.getTemperature(), weather.getCondition()).toBundle());
+              new SuggestArgs(count, crowd, weather.getTemperatureAsF(), weather.getCondition()).toBundle());
 
       final IdeasFragment fragment = new IdeasFragment();
       fragment.setArguments(args);
