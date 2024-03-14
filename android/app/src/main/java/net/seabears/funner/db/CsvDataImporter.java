@@ -12,15 +12,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-
-import com.google.common.base.Preconditions;
 
 public class CsvDataImporter
 {
@@ -178,7 +176,6 @@ public class CsvDataImporter
     }
   }
 
-  @SuppressLint("SimpleDateFormat")
   private void insertData(Map<DataColumn, Object> data) throws ParseException
   {
     // get each datum
@@ -187,7 +184,7 @@ public class CsvDataImporter
     boolean single = (Boolean) data.get(DataColumn.SINGLE);
     boolean couple = (Boolean) data.get(DataColumn.COUPLE);
     boolean group = (Boolean) data.get(DataColumn.GROUP);
-    final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
     List<Date> times = convert((String[]) data.get(DataColumn.TIMES), new RawDataConverter<Date>()
     {
       @Override
@@ -208,11 +205,11 @@ public class CsvDataImporter
     List<String> aliases = Arrays.asList((String[]) data.get(DataColumn.ALIASES));
 
     // validate data
-    Preconditions.checkState(!name.isEmpty());
-    Preconditions.checkState(!action.isEmpty());
-    Preconditions.checkState(!times.isEmpty());
-    Preconditions.checkState(!temps.isEmpty());
-    Preconditions.checkState(!weather.isEmpty());
+    errorIfTrue(name.isEmpty());
+    errorIfTrue(action.isEmpty());
+    errorIfTrue(times.isEmpty());
+    errorIfTrue(temps.isEmpty());
+    errorIfTrue(weather.isEmpty());
 
     // insert pastime
     final ContentValues values = new ContentValues();
@@ -295,5 +292,11 @@ public class CsvDataImporter
   private long insert(String table, ContentValues values)
   {
     return db.insert(table, null, values);
+  }
+
+  private static void errorIfTrue(boolean b) {
+    if (b) {
+      throw new IllegalStateException();
+    }
   }
 }
