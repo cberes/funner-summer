@@ -6,6 +6,7 @@ import net.seabears.funner.ContextualDateFormatter;
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.db.SQLiteCursorLoader;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -75,8 +76,9 @@ public class HistoryFragment extends ProgressListFragment
   {
     // Now create and return a CursorLoader that will take care of
     // creating a Cursor for the data being displayed.
-    return new SQLiteCursorLoader(getActivity().getApplicationContext(),
-        new FunnerDbHelper(getActivity().getApplicationContext()),
+    Context context = getActivity().getApplicationContext();
+    return new SQLiteCursorLoader(context,
+        new FunnerDbHelper(context),
         "select p._id as _id, p.action_name as action, datetime(a.performed, 'localtime') as performed "
             + "from action a "
             + "join pastime p on a.pastime_id = p._id "
@@ -84,7 +86,7 @@ public class HistoryFragment extends ProgressListFragment
             + "where sm.name <> 'ballast' "
             + "order by a.performed desc "
             + "limit ?",
-        new String[] { String.valueOf(MAX_ROWS) });
+        new String[] { Integer.toString(MAX_ROWS) });
   }
 
   @Override

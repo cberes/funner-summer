@@ -27,12 +27,12 @@ public class FunnerDbHelper extends SQLiteOpenHelper
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
     this.context = context;
 
-    sqlQueries = new LinkedList<String>();
+    sqlQueries = new LinkedList<>();
     InputStream is = context.getResources().openRawResource(R.raw.db);
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
     StringBuilder sqlQueryBuilder = new StringBuilder();
 
-    String readLine = null;
+    String readLine;
     try
     {
       while ((readLine = br.readLine()) != null)
@@ -77,10 +77,7 @@ public class FunnerDbHelper extends SQLiteOpenHelper
       Log.i(getClass().getSimpleName(), "Importing data....");
       new CsvDataImporter(context, db, R.raw.data).importData();
       Log.i(getClass().getSimpleName(), "Finished importing data.");
-    } catch (IOException e)
-    {
-      Log.e(getClass().getSimpleName(), e.getMessage(), e);
-    } catch (ParseException e)
+    } catch (IOException | ParseException e)
     {
       Log.e(getClass().getSimpleName(), e.getMessage(), e);
     }

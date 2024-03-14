@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -137,12 +136,18 @@ public class CsvDataImporter
 
   private static <T> List<T> convert(String[] raw, RawDataConverter<T> converter) throws ParseException
   {
-    List<T> converted = new ArrayList<T>(raw.length);
-    for (String s : raw)
-    {
-      converted.add(converter.convert(s));
+    List<T> converted = new ArrayList<T>(raw == null ? 0 : raw.length);
+    if (raw != null) {
+      for (String s : raw)
+      {
+        converted.add(converter.convert(s));
+      }
     }
     return converted;
+  }
+
+  private static boolean toBoolean(Object obj) {
+    return obj != null && (boolean) obj;
   }
 
   public void importData() throws IOException, ParseException
@@ -181,9 +186,9 @@ public class CsvDataImporter
     // get each datum
     String name = (String) data.get(DataColumn.NAME);
     String action = (String) data.get(DataColumn.ACTION);
-    boolean single = (Boolean) data.get(DataColumn.SINGLE);
-    boolean couple = (Boolean) data.get(DataColumn.COUPLE);
-    boolean group = (Boolean) data.get(DataColumn.GROUP);
+    boolean single = toBoolean(data.get(DataColumn.SINGLE));
+    boolean couple = toBoolean(data.get(DataColumn.COUPLE));
+    boolean group = toBoolean(data.get(DataColumn.GROUP));
     final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
     List<Date> times = convert((String[]) data.get(DataColumn.TIMES), new RawDataConverter<Date>()
     {
@@ -201,15 +206,15 @@ public class CsvDataImporter
         return Integer.parseInt(s);
       }
     });
-    List<String> weather = Arrays.asList((String[]) data.get(DataColumn.WEATHER));
-    List<String> aliases = Arrays.asList((String[]) data.get(DataColumn.ALIASES));
+    String[] weather = (String[]) data.get(DataColumn.WEATHER);
+    String[] aliases = (String[]) data.get(DataColumn.ALIASES);
 
     // validate data
-    errorIfTrue(name.isEmpty());
-    errorIfTrue(action.isEmpty());
+    errorIfTrue(name == null || name.isEmpty());
+    errorIfTrue(action == null || action.isEmpty());
     errorIfTrue(times.isEmpty());
     errorIfTrue(temps.isEmpty());
-    errorIfTrue(weather.isEmpty());
+    errorIfTrue(weather == null || weather.length == 0);
 
     // insert pastime
     final ContentValues values = new ContentValues();
@@ -219,16 +224,18 @@ public class CsvDataImporter
     long pastimeId = insert("pastime", values);
 
     // insert aliases
-    for (String alias : aliases)
-    {
-      values.clear();
-      values.put("name", alias);
-      values.put("pastime_id", pastimeId);
-      insert("pastime_alias", values);
+    if (aliases != null) {
+      for (String alias : aliases)
+      {
+        values.clear();
+        values.put("name", alias);
+        values.put("pastime_id", pastimeId);
+        insert("pastime_alias", values);
+      }
     }
 
     // insert action rows
-    final SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    final SimpleDateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     long actionId = 0;
     for (Date time : times)
     {

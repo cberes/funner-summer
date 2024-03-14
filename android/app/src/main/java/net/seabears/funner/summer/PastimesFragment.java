@@ -92,13 +92,15 @@ public class PastimesFragment extends ProgressListFragment
     return super.onOptionsItemSelected(item);
   }
 
+  @NonNull
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
     // Now create and return a CursorLoader that will take care of
     // creating a Cursor for the data being displayed.
-    return new SQLiteCursorLoader(getActivity().getApplicationContext(),
-        new FunnerDbHelper(getActivity().getApplicationContext()),
+    Context context = getActivity().getApplicationContext();
+    return new SQLiteCursorLoader(context,
+        new FunnerDbHelper(context),
         "select _id, action_name as action, active from pastime order by name",
         new String[0]);
   }
