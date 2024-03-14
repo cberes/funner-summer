@@ -7,9 +7,10 @@ import java.util.Set;
 
 import net.seabears.funner.db.FunnerDbHelper;
 import net.seabears.funner.db.SQLiteCursorLoader;
-import net.seabears.funner.summer.suggest.RandomSqlQueryFactory;
+import net.seabears.funner.summer.suggest.PastimeSuggestionStrategy;
+import net.seabears.funner.summer.suggest.RandomPastimeSuggestionStrategy;
 import net.seabears.funner.summer.suggest.SuggestArgs;
-import net.seabears.funner.summer.suggest.SuggestionSqlQueryFactory;
+import net.seabears.funner.summer.suggest.HistoricalPastimeSuggestionStrategy;
 
 import android.content.Context;
 import android.content.Intent;
@@ -93,27 +94,21 @@ public class IdeasFragment extends ProgressListFragment
   {
     // Now create and return a CursorLoader that will take care of
     // creating a Cursor for the data being displayed.
-    SuggestArgs suggestArgs = SuggestArgs.fromBundle(args);
+    final SuggestArgs suggestArgs = SuggestArgs.fromBundle(args);
     final Context context = getActivity().getApplicationContext();
+    final PastimeSuggestionStrategy strategy = getSuggestionStrategy();
     return new SQLiteCursorLoader(
             context,
             new FunnerDbHelper(context),
-            query(context),
-            queryArgs(suggestArgs));
+            strategy.getQuery(context),
+            strategy.getArguments(suggestArgs));
   }
 
-  private String query(Context context)
+  private PastimeSuggestionStrategy getSuggestionStrategy()
   {
     return Ideas.class.equals(parent)
-            ? SuggestionSqlQueryFactory.query(context)
-            : RandomSqlQueryFactory.query(context);
-  }
-
-  private String[] queryArgs(SuggestArgs suggestArgs)
-  {
-    return Ideas.class.equals(parent)
-            ? SuggestionSqlQueryFactory.args(suggestArgs)
-            : RandomSqlQueryFactory.args(suggestArgs);
+            ? new HistoricalPastimeSuggestionStrategy()
+            : new RandomPastimeSuggestionStrategy();
   }
 
   // Called when a previously created loader is reset, making the data

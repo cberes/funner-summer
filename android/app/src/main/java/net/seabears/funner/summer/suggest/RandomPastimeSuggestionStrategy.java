@@ -9,16 +9,13 @@ import net.seabears.funner.summer.R;
 import android.content.Context;
 import android.util.Log;
 
-public final class SuggestionSqlQueryFactory
+public class RandomPastimeSuggestionStrategy implements PastimeSuggestionStrategy
 {
-  private SuggestionSqlQueryFactory()
-  {
-    throw new UnsupportedOperationException("cannot instantiate " + getClass());
-  }
 
-  public static String query(Context context)
+  @Override
+  public String getQuery(Context context)
   {
-    InputStream is = context.getResources().openRawResource(R.raw.suggest);
+    InputStream is = context.getResources().openRawResource(R.raw.random);
     BufferedReader br = new BufferedReader(new InputStreamReader(is));
     StringBuilder sqlQueryBuilder = new StringBuilder();
 
@@ -31,26 +28,23 @@ public final class SuggestionSqlQueryFactory
       }
     } catch (IOException e)
     {
-      Log.e(SuggestionSqlQueryFactory.class.getSimpleName(), e.getMessage(), e);
+      Log.e(RandomPastimeSuggestionStrategy.class.getSimpleName(), e.getMessage(), e);
     }
 
     return sqlQueryBuilder.toString();
   }
 
-  public static String[] args(SuggestArgs args)
+  @Override
+  public String[] getArguments(SuggestArgs args)
   {
     final String crowdArg = args.getCrowd().getCode();
     final String tempArg = String.valueOf(args.getTemperature());
     return new String[]
     {
         crowdArg,
-        crowdArg,
+        tempArg,
+        tempArg,
         args.getWeather(),
-        args.getWeather(),
-        tempArg,
-        tempArg,
-        tempArg,
-        tempArg,
         String.valueOf(args.getCount())
     };
   }
