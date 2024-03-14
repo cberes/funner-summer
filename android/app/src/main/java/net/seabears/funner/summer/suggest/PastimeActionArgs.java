@@ -10,8 +10,8 @@ public class PastimeActionArgs implements Serializable
   private static final long serialVersionUID = -1873078141883313938L;
 
   private static final String KEY_CROWD = "crowd";
-  private static final String KEY_TEMPERATURE = "temperature";
-  private static final String KEY_WEATHER = "weather";
+  public static final String KEY_TEMPERATURE = "temperature";
+  public static final String KEY_WEATHER = "weather";
 
   private final Crowd crowd;
   private final int temperature;

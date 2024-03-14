@@ -25,24 +25,9 @@ import androidx.loader.content.Loader;
 public class IdeasFragment extends ProgressListFragment
     implements LoaderManager.LoaderCallbacks<Cursor>
 {
-  private static class Mutable<T>
-  {
-    private volatile T value;
-
-    public T get() {
-      return value;
-    }
-
-    public void set(final T value) {
-      this.value = value;
-    }
-  }
-
   public static final int LIST_COUNT_DEFAULT = 7;
 
   public static final String ARG_PARENT = "parent";
-
-  public static final String ARG_QUERY_OPTIONS = "query_options";
 
   /**
    * The fragment argument representing the section number for this fragment.
@@ -56,9 +41,9 @@ public class IdeasFragment extends ProgressListFragment
   // This is the Adapter being used to display the list's data
   private SimpleCursorAdapter mAdapter;
 
-  private Date lastRefreshed;
+  private Bundle updatedArgs;
 
-  private final Mutable<SuggestArgs> suggestArgs = new Mutable<>();
+  private Date lastRefreshed;
 
   @Override
   public void onActivityCreated(Bundle savedInstanceState)
@@ -86,7 +71,19 @@ public class IdeasFragment extends ProgressListFragment
     // set list adapter for suggestions after adding ad view
     setListAdapter(mAdapter);
 
-    LoaderManager.getInstance(this).initLoader(0, getArguments(), this);
+    LoaderManager.getInstance(this).initLoader(0, argumentsWithUpdates(), this);
+    lastRefreshed = new Date();
+  }
+
+  private Bundle argumentsWithUpdates()
+  {
+    Bundle initial = getArguments();
+    Bundle withUpdates = new Bundle();
+    withUpdates.putAll(initial);
+    if (updatedArgs != null) {
+      withUpdates.putAll(updatedArgs);
+    }
+    return withUpdates;
   }
 
   // Called when a new Loader needs to be created
@@ -96,22 +93,27 @@ public class IdeasFragment extends ProgressListFragment
   {
     // Now create and return a CursorLoader that will take care of
     // creating a Cursor for the data being displayed.
-    suggestArgs.set(SuggestArgs.fromBundle(args.getBundle(ARG_QUERY_OPTIONS)));
+    SuggestArgs suggestArgs = SuggestArgs.fromBundle(args);
     final Context context = getActivity().getApplicationContext();
     return new SQLiteCursorLoader(
             context,
             new FunnerDbHelper(context),
-            Ideas.class.equals(parent)
-                    ? SuggestionSqlQueryFactory.query(context)
-                    : RandomSqlQueryFactory.query(context),
-            queryArgs());
+            query(context),
+            queryArgs(suggestArgs));
   }
 
-  private String[] queryArgs()
+  private String query(Context context)
   {
     return Ideas.class.equals(parent)
-            ? SuggestionSqlQueryFactory.args(suggestArgs.get())
-            : RandomSqlQueryFactory.args(suggestArgs.get());
+            ? SuggestionSqlQueryFactory.query(context)
+            : RandomSqlQueryFactory.query(context);
+  }
+
+  private String[] queryArgs(SuggestArgs suggestArgs)
+  {
+    return Ideas.class.equals(parent)
+            ? SuggestionSqlQueryFactory.args(suggestArgs)
+            : RandomSqlQueryFactory.args(suggestArgs);
   }
 
   // Called when a previously created loader is reset, making the data
@@ -131,7 +133,6 @@ public class IdeasFragment extends ProgressListFragment
   public void onLoadFinished(@NonNull final Loader<Cursor> loader, final Cursor data) {
     // Swap the new cursor in. (The framework will take care of closing the
     // old cursor once we return.)
-    lastRefreshed = new Date();
     mAdapter.swapCursor(data);
     if (data.getCount() == 0)
     {
@@ -145,14 +146,16 @@ public class IdeasFragment extends ProgressListFragment
     Intent intent = new Intent(this.getActivity(), Pastime.class);
     intent.putExtra(Pastime.ARG_PASTIME_ID, id);
     intent.putExtra(Pastime.ARG_PARENT, parent);
-    intent.putExtra(Pastime.ARG_PASTIME_ARGS, suggestArgs.get());
+    intent.putExtra(Pastime.ARG_PASTIME_ARGS, SuggestArgs.fromBundle(argumentsWithUpdates()));
     startActivity(intent);
   }
 
-  public void refresh()
+  public void refresh(Bundle update)
   {
+    updatedArgs = update;
     LoaderManager.getInstance(this).destroyLoader(0);
-    LoaderManager.getInstance(this).initLoader(0, getArguments(), this);
+    LoaderManager.getInstance(this).initLoader(0, argumentsWithUpdates(), this);
+    lastRefreshed = new Date();
   }
 
   public Date getLastRefreshed()

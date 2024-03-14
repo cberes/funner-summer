@@ -14,6 +14,7 @@ import net.seabears.funner.db.SelectionMethod;
 import net.seabears.funner.summer.suggest.PastimeActionArgs;
 import net.seabears.funner.weather.WeatherService;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -163,7 +164,12 @@ public class Pastime extends FragmentActivity
         final long pastimeId = Pastime.this.id;
         final long selectionMethodId = SELECTION_METHODS.get(parent);
         final ActionInsertTask task = new ActionInsertTask(db, pastimeId, selectionMethodId);
-        final ActionInsertInBackgroundTask backgroundTask = new ActionInsertInBackgroundTask(Pastime.this, parent, task, weatherService);
+        final ActionInsertInBackgroundTask backgroundTask = new ActionInsertInBackgroundTask(new ActivityProvider() {
+          @Override
+          public Activity getActivity() {
+            return Pastime.this;
+          }
+        }, parent, task, weatherService);
 
         if (pastimeArgs == null)
         {

@@ -13,10 +13,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import net.seabears.funner.summer.suggest.PastimeActionArgs;
 import net.seabears.funner.weather.TemperatureUnit;
 import net.seabears.funner.weather.Weather;
 import net.seabears.funner.weather.WeatherService;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -143,8 +145,8 @@ public class WeatherEditor extends FragmentActivity {
 
     private void finishWithWeather(Weather weather) {
         Intent data = new Intent();
-        data.putExtra("condition", weather.getCondition());
-        data.putExtra("temperature", weather.getTemperatureAsF());
+        data.putExtra(PastimeActionArgs.KEY_WEATHER, weather.getCondition());
+        data.putExtra(PastimeActionArgs.KEY_TEMPERATURE, weather.getTemperatureAsF());
         setResult(RESULT_OK, data);
         finish();
     }

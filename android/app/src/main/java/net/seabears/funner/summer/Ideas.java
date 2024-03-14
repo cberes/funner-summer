@@ -1,23 +1,17 @@
 package net.seabears.funner.summer;
 
-import java.util.Locale;
-
-import net.seabears.funner.db.Crowd;
-import net.seabears.funner.summer.suggest.SuggestArgs;
-import net.seabears.funner.weather.Weather;
 import net.seabears.funner.weather.WeatherService;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
@@ -55,7 +49,13 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
 
     // Create the adapter that will return a fragment for each of the three
     // primary sections of the activity.
-    mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+    ContextProvider contextProvider = new ContextProvider() {
+      @Override
+      public Context getContext() {
+        return Ideas.this;
+      }
+    };
+    mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), Ideas.class, contextProvider, weatherService);
 
     // Set up the ViewPager with the sections adapter.
     mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -151,79 +151,10 @@ public class Ideas extends FragmentActivity implements ActionBar.TabListener
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
   {
-    // TODO how can I update the IdeasFragment from here?
-    // maybe this: https://developer.android.com/guide/fragments/communicate
-    // Fragment fragment = mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem());
-    // TODO set new arguments!
-    // if (requestCode == REQUEST_WEATHER && resultCode == RESULT_OK)
-    // {
-    // }
+    if (requestCode == REQUEST_WEATHER && resultCode == RESULT_OK)
+    {
+      mSectionsPagerAdapter.refreshFragments(data == null ? new Bundle() : data.getExtras());
+    }
     super.onActivityResult(requestCode, resultCode, data);
-  }
-
-  /**
-   * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one
-   * of the sections/tabs/pages.
-   */
-  public class SectionsPagerAdapter extends FragmentPagerAdapter
-  {
-    public SectionsPagerAdapter(FragmentManager fm)
-    {
-      super(fm);
-    }
-
-    @Override
-    public Fragment getItem(int position)
-    {
-      Crowd crowd;
-      switch (position)
-      {
-        case 0:
-          crowd = Crowd.SINGLE;
-          break;
-        case 1:
-          crowd = Crowd.COUPLE;
-          break;
-        case 2:
-        default:
-          crowd = Crowd.GROUP;
-          break;
-      }
-
-      final int count = IdeasFragment.LIST_COUNT_DEFAULT;
-      final Weather weather = weatherService.getWeather(Ideas.this);
-
-      final Bundle args = new Bundle();
-      args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
-      args.putSerializable(IdeasFragment.ARG_PARENT, Ideas.class);
-      args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-              new SuggestArgs(count, crowd, weather.getTemperatureAsF(), weather.getCondition()).toBundle());
-
-      final IdeasFragment fragment = new IdeasFragment();
-      fragment.setArguments(args);
-      return fragment;
-    }
-
-    @Override
-    public int getCount()
-    {
-      return 3;
-    }
-
-    @Override
-    public CharSequence getPageTitle(int position)
-    {
-      Locale l = Locale.getDefault();
-      switch (position)
-      {
-      case 0:
-        return getString(R.string.title_section_single).toUpperCase(l);
-      case 1:
-        return getString(R.string.title_section_couple).toUpperCase(l);
-      case 2:
-        return getString(R.string.title_section_group).toUpperCase(l);
-      }
-      return null;
-    }
   }
 }

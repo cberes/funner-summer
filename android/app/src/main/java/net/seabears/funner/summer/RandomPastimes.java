@@ -1,28 +1,16 @@
 package net.seabears.funner.summer;
 
-import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.Locale;
-
-import net.seabears.funner.db.Crowd;
-import net.seabears.funner.summer.suggest.SuggestArgs;
-import net.seabears.funner.weather.Weather;
 import net.seabears.funner.weather.WeatherService;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
@@ -59,7 +47,13 @@ public class RandomPastimes extends FragmentActivity implements ActionBar.TabLis
 
     // Create the adapter that will return a fragment for each of the three
     // primary sections of the activity.
-    mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+    ContextProvider contextProvider = new ContextProvider() {
+      @Override
+      public Context getContext() {
+        return RandomPastimes.this;
+      }
+    };
+    mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), RandomPastimes.class, contextProvider, weatherService);
 
     // Set up the ViewPager with the sections adapter.
     mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -144,150 +138,4 @@ public class RandomPastimes extends FragmentActivity implements ActionBar.TabLis
   public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
   {}
 
-  /**
-   * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one
-   * of the sections/tabs/pages.
-   */
-  public class SectionsPagerAdapter extends FragmentPagerAdapter
-  {
-    private final SparseArray<Date> fragmentsToRefresh = new SparseArray<Date>(getCount());
-
-    private Fragment primary;
-
-    // start with an invalid index
-    private int primaryPosition = -1;
-
-    public SectionsPagerAdapter(FragmentManager fm)
-    {
-      super(fm);
-    }
-
-    @Override
-    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object)
-    {
-      super.setPrimaryItem(container, position, object);
-
-      // get the primary item so we can refresh it if we need to
-      primary = (Fragment) object;
-      primaryPosition = position;
-    }
-
-    @Override
-    public Fragment getItem(int position)
-    {
-      Crowd crowd;
-      switch (position)
-      {
-        case 0:
-          crowd = Crowd.SINGLE;
-          break;
-        case 1:
-          crowd = Crowd.COUPLE;
-          break;
-        case 2:
-        default:
-          crowd = Crowd.GROUP;
-          break;
-      }
-
-      final int count = IdeasFragment.LIST_COUNT_DEFAULT;
-      final Weather weather = weatherService.getWeather(RandomPastimes.this);
-
-      final Bundle args = new Bundle();
-      args.putInt(IdeasFragment.ARG_SECTION_NUMBER, position);
-      args.putSerializable(IdeasFragment.ARG_PARENT, RandomPastimes.class);
-      args.putBundle(IdeasFragment.ARG_QUERY_OPTIONS,
-              new SuggestArgs(count, crowd, weather.getTemperatureAsF(), weather.getCondition()).toBundle());
-
-      final IdeasFragment fragment = new IdeasFragment();
-      fragment.setArguments(args);
-      return fragment;
-    }
-
-    @Override
-    public int getCount()
-    {
-      return 3;
-    }
-
-    @Override
-    public CharSequence getPageTitle(int position)
-    {
-      Locale l = Locale.getDefault();
-      switch (position)
-      {
-      case 0:
-        return getString(R.string.title_section_single).toUpperCase(l);
-      case 1:
-        return getString(R.string.title_section_couple).toUpperCase(l);
-      case 2:
-        return getString(R.string.title_section_group).toUpperCase(l);
-      }
-      return null;
-    }
-
-    public void refreshFragments()
-    {
-      final Date date = new Date();
-      for (int i = 0; i < getCount(); ++i)
-      {
-        if (i != primaryPosition)
-        {
-          fragmentsToRefresh.put(i, date);
-        }
-      }
-
-      if (primary instanceof IdeasFragment)
-      {
-        ((IdeasFragment) primary).refresh();
-      }
-    }
-
-    private Fragment getFragment(int viewId, int position)
-    {
-      try
-      {
-        // the tag name is created by a private method
-        Method method = FragmentPagerAdapter.class.getDeclaredMethod("makeFragmentName", Integer.TYPE, Long.TYPE);
-        if (method != null)
-        {
-          method.setAccessible(true);
-          String tag = (String) method.invoke(null, viewId, position);
-          return getSupportFragmentManager().findFragmentByTag(tag);
-        }
-      } catch (Exception e)
-      {
-        // log the error and show other methods
-        Log.e(getClass().getSimpleName(), e.getMessage(), e);
-        Log.d(getClass().getSimpleName(), "Available methods:");
-        for (Method m : FragmentPagerAdapter.class.getDeclaredMethods())
-        {
-          Log.d(getClass().getSimpleName(), m.toGenericString());
-        }
-      }
-      return null;
-    }
-
-    @Override
-    public void startUpdate(@NonNull ViewGroup container)
-    {
-      super.startUpdate(container);
-      for (int i = 0; i < getCount(); ++i)
-      {
-        Fragment fragment = getFragment(container.getId(), i);
-        if (fragment instanceof IdeasFragment)
-        {
-          // refresh the fragment if it exists and is out of date
-          IdeasFragment ideasFragment = (IdeasFragment) fragment;
-          final Date refreshed = ideasFragment.getLastRefreshed();
-          final Date date = fragmentsToRefresh.get(i);
-          if (date != null && refreshed != null && date.after(refreshed))
-          {
-            Log.d(getClass().getSimpleName(), "Refreshing fragment at position " + i);
-            ideasFragment.refresh();
-          }
-        }
-      }
-    }
-  }
 }

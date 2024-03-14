@@ -12,17 +12,17 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void>
+class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void>
 {
-  private final Activity activity;
+  private final ActivityProvider activityProvider;
   private final Class<?> parent;
   private final ActionInsertTask task;
   private final WeatherService weatherService;
   private ProgressDialog progressDialog;
 
-  public ActionInsertInBackgroundTask(Activity activity, Class<?> parent, ActionInsertTask task, WeatherService weatherService)
+  public ActionInsertInBackgroundTask(ActivityProvider activityProvider, Class<?> parent, ActionInsertTask task, WeatherService weatherService)
   {
-    this.activity = activity;
+    this.activityProvider = activityProvider;
     this.parent = parent;
     this.task = task;
     this.weatherService = weatherService;
@@ -31,9 +31,9 @@ public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void
   @Override
   protected void onPreExecute()
   {
-    progressDialog = ProgressDialog.show(activity,
-        activity.getText(R.string.pastime_progress_title),
-        activity.getText(R.string.pastime_progress),
+    progressDialog = ProgressDialog.show(activityProvider.getActivity(),
+        activityProvider.getActivity().getText(R.string.pastime_progress_title),
+        activityProvider.getActivity().getText(R.string.pastime_progress),
         false);
     super.onPreExecute();
   };
@@ -41,7 +41,7 @@ public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void
   @Override
   protected Void doInBackground(Crowd... params)
   {
-    Weather weather = weatherService.getWeather(activity);
+    Weather weather = weatherService.getWeather(activityProvider.getActivity());
     publishProgress((progressDialog.getMax() / 2) - 1);
     // set arguments now that all are known
     task.setPastimeArgs(new PastimeActionArgs(params[0], weather.getTemperatureAsF(), weather.getCondition()));
@@ -67,6 +67,7 @@ public class ActionInsertInBackgroundTask extends AsyncTask<Crowd, Integer, Void
   {
     super.onPostExecute(result);
     progressDialog.dismiss();
+    Activity activity = activityProvider.getActivity();
     Toast.makeText(activity, R.string.pastime_recorded, Toast.LENGTH_LONG).show();
     Intent intent = new Intent(activity, parent);
     if (PastimeEditor.class.equals(parent))
