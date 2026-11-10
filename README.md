@@ -6,9 +6,15 @@
 
 Funner Summer is an Android app that recommends fun activities.
 
+## Project moved
+
+The project has moved to [Codeberg](https://codeberg.org/cberes/funner-summer).
+
 ## Get the app
 
-You can find the app in the [Google Play Store](https://play.google.com/store/apps/details?id=net.seabears.funner.summer).
+<a href="https://codeberg.org/cberes/funner-summer/releases">
+    <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-white-on-black.png" height="60">
+</a>
 
 ## Icon
 
